@@ -19,6 +19,7 @@ docker run --rm \
     -e SES_TO_ADDRESS= \
     -e SES_FROM_ADDRESS= \
     -e UPDATE_FREQUENCY= \
+    -e NODE_ENV= \
     sjmayotte/route53-dynamic-dns
 ```
 
@@ -34,6 +35,7 @@ docker run --rm \
 * `SES_TO_ADDRESS` - If using AWS SES, this is to address for email; ex: admin@example.com   
 * `SES_FROM_ADDRESS` - If using AWS SES, this is from address for email; ex: notification@example.com
 * `UPDATE_FREQUENCY` - Frequency in Milliseconds of check to update Public IP; ex: 60000, which is every minute
+* `NODE_ENV` - Always set to "Docker" when running in a container
 
 ## License
 Route53 Dynamic DNS is licensed under the MIT License (https://opensource.org/licenses/MIT).  A copy of MIT License is included in this repository.

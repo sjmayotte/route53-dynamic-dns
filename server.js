@@ -6,7 +6,15 @@ const fs = require('fs');
 const dns = require('dns');
 const AWS = require('aws-sdk');
 const log4js = require('log4js');
-var config = require('./config.js');
+
+//Assumes that environment variables are only used in Docker container
+if (process.env.NODE_ENV == 'Docker')
+    {
+        return;
+    }
+else {
+    var config = require('./config.js');
+}
 
 //Global configuration variables set at runtime or in config.js
 var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || config.aws_access_key_id;
