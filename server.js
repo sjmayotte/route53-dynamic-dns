@@ -37,7 +37,7 @@ AWS.config.update(
     }
 );
 
-//Create Route53 object
+//Create objects used to interact with AWS-SDK
 var route53 = new AWS.Route53();
 var ses = new AWS.SES();
 
@@ -315,8 +315,6 @@ var SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMess
     });
 };
 
-//Execute funtion every 5 minutes (300,000ms)
-
 //Wrap up execution logic into a function
 var RunScript = function () {
     if (FirstRun){
@@ -329,5 +327,5 @@ var RunScript = function () {
     }
 };
 
-//Run the script at interval set in UPDATE_FREQUENCY
+//Execute function RunScript at interval set in UPDATE_FREQUENCY (ex: 60000, which equals 1 minute)
 setInterval(RunScript, UPDATE_FREQUENCY);
