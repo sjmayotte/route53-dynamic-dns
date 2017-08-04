@@ -2,7 +2,7 @@
 Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address.  Alternative to Dynamic DNS services such as Dyn, No-IP, etc
 
 ## Usage
-Run be run as a standalone program or in a Docker container.
+Run as a standalone program or in a Docker container.
 
 ### Docker
 ```
@@ -36,4 +36,4 @@ docker run --rm \
 * `UPDATE_FREQUENCY` - Frequency in Milliseconds of check to update Public IP; ex: 60000, which is every minute
 
 ## License
-Route53 Dynamic DNS is licensed under the MIT License (https://opensource.org/licenses/MIT).  Copy of MIT License is included in this repository.
+Route53 Dynamic DNS is licensed under the MIT License (https://opensource.org/licenses/MIT).  A copy of MIT License is included in this repository.
