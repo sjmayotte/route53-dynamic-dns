@@ -1,0 +1,19 @@
+{
+  "name": "Route53-Dynamic-DNS",
+  "version": "1.0.0",
+  "description": "Update AWS Route53 hosted zone with current public IP address.  Alternative to Dynamic DNS services such as Dyn, No-IP, etc",
+  "author": "Steven Mayotte <mayots@gmail.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.86.0",
+    "log4js": "^2.2.0"
+  },
+  "engines": {
+    "node": "8.2.1"
+  },
+  "private": true,
+  "license": "MIT"
+}

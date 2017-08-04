@@ -1,0 +1,13 @@
+module.exports = {
+  "aws_access_key_id": [Secret Key ID from AWS account; see: http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html],
+  "aws_secret_access_key": [Secret Access Key from AWS account; see: http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html],
+  "aws_region": [AWS Region; ex: "us-east-1"; see: http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-region.html],
+  "route53_hosted_zone_id": [AWS Route53 Hosted Zone ID],
+  "route53_domain": [AWS Route53 FQDN; ex: "home.example.com"],
+  "route53_type": [AWS Route 53 record type for FQDN; ex: "A"],
+  "route53_ttl": [AWS Route 53 TTL in seconds for FQDN; ex: 60],
+  "send_email_ses": [Use AWS SES to send notification email. ex: true],
+  "ses_to_address": [If using AWS SES, this is to address for email; ex: admin@example.com],
+  "ses_from_address": [If using AWS SES, this is from address for email; ex: notification@example.com],
+  "update_frequency": [Frequency in Milliseconds of check to update Public IP; ex: 60000, which is every minute]
+}
