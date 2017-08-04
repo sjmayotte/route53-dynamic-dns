@@ -12,8 +12,5 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
-# Open port 8080 for external connections
-EXPOSE 8080
-
 # Start server
 CMD [ "npm", "start" ]
