@@ -1,5 +1,5 @@
-# Use offical Node.js image.  The image uses Alpine linux
-FROM node:8.2.1-alpine
+# Use offical Node.js image.  The image uses Debain Jessie
+FROM node:8.2.1
 
 # Create app directory
 RUN mkdir -p /usr/src/app
