@@ -34,7 +34,7 @@ var LastKnownIPFileName = 'Last-Known-IP.log';
 var currentIP = '';
 var previousIP = '';
 var SentErrorEmail = false;
-var FirstRun = true;
+var FirstRunStateFileName = 'First-Run-State.log';
 
 //Set required AWS configuration variables
 AWS.config.update(
@@ -325,15 +325,32 @@ var SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMess
 
 //Wrap up execution logic into a function
 var RunScript = function () {
-    if (FirstRun){
-        logger.info('First run of process.')
-        RemoveFileNameIfItExists(LastKnownIPFileName);
-        FirstRun = false;
-    }
-    else {
-        DeterminePublicIP();
-    }
+    //Determine if file exists
+    fs.stat(FirstRunStateFileName, function (err, stat) {
+        if (err && err.code == 'ENOENT') {
+            //File doesn't exist.  Create a file with currentIP
+            fs.writeFile(FirstRunStateFileName, 'True', (err) => {
+                if (err) {
+                    logger.error('Unable to write true in', FirstRunStateFileName, 'Error code:', err.code);
+                    SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />'+ err.stack);
+                }
+                else {
+                    logger.info('Updated', FirstRunStateFileName, 'with value of true');
+                }
+            });
+            //This is the first run
+            logger.info('First run of process.')
+            RemoveFileNameIfItExists(LastKnownIPFileName);
+        }
+        else {
+            logger.info(FirstRunStateFileName, 'already exists.  Setting FirstRun = false');
+            //This is NOT the first run
+            DeterminePublicIP();
+        }
+    });
 };
 
 //Execute function RunScript at interval set in UPDATE_FREQUENCY (ex: 60000, which equals 1 minute)
-setInterval(RunScript, UPDATE_FREQUENCY);
+//setInterval(RunScript, UPDATE_FREQUENCY);
+
+RunScript();
