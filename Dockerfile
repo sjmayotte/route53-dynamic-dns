@@ -13,4 +13,4 @@ RUN npm install
 COPY . /usr/src/app
 
 # Start server.js using forever (https://www.npmjs.com/package/forever)
-CMD [ "forever", "start", "server.js", "-f" ]
+CMD [ "forever start server.js", "-f" ]
