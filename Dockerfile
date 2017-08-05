@@ -12,5 +12,5 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
-# Start server
-CMD [ "npm", "start" ]
+# Start server.js using forever (https://www.npmjs.com/package/forever)
+CMD [ "forever", "start", "server.js", "-f" ]

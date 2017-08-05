@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.86.0",
+    "forever": "^0.15.3",
     "log4js": "^2.2.0"
   },
   "engines": {
