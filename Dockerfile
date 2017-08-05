@@ -5,8 +5,6 @@ FROM node:8.2.1-alpine
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-ADD run_forever.sh /run_forever.sh
-
 # Install app dependencies
 COPY package.json /usr/src/app/
 RUN npm install
@@ -15,4 +13,4 @@ RUN npm install
 COPY . /usr/src/app
 
 # Run server.js every 30 seconds
-CMD ["/run_forever.sh"]
+CMD bash run_forever.sh
