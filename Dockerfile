@@ -1,5 +1,5 @@
-# Use offical Node.js image.  The image uses Debain Jessie
-FROM node:8.2.1
+# Use offical Node.js image.  The image uses Apline Linux
+FROM node:8.2.1-alpine
 
 # Create app directory
 RUN mkdir -p /usr/src/app
@@ -13,4 +13,4 @@ RUN npm install
 COPY . /usr/src/app
 
 # Run server.js every 30 seconds
-CMD bash run_forever.sh
+CMD sh run_forever.sh
