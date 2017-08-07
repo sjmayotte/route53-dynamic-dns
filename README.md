@@ -1,3 +1,4 @@
+[![npm](https://img.shields.io/npm/v/npm.svg)](https://github.com/sjmayotte/route53-dynamic-dns)
 # sjmayotte/route53-dynamic-dns
 WARNING: Work in progress!  Check back shortly for working version
 
