@@ -1,3 +1,2 @@
 #!/bin/bash
-BUILD_DATE=$(date)
-docker build --build-arg BUILD_DATE=$BUILD_DATE --build-arg VCS_REF=$SOURCE_COMMIT -t $IMAGE_NAME .
+docker build --build-arg VCS_REF=$SOURCE_COMMIT -t $IMAGE_NAME .
