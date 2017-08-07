@@ -1,5 +1,6 @@
 # sjmayotte/route53-dynamic-dns
-[![npm](https://img.shields.io/npm/v/npm.svg)](https://github.com/sjmayotte/route53-dynamic-dns)
+[![npm](https://img.shields.io/npm/v/npm.svg)](https://github.com/sjmayotte/route53-dynamic-dns) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/sjmayotte/route53-dynamic-dns)
+
 WARNING: Work in progress!  Check back shortly for working version
 
 Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address.  Alternative to Dynamic DNS services such as Dyn, No-IP, etc
