@@ -42,6 +42,7 @@ Can be run as [standalone Node.js process](#standalone-node.js-process) or [Dock
 
 ## Standalone Node.js Process
 ### Clone Repository
+Download latest code from Github repository.
 ```bash
 $ git clone https://github.com/sjmayotte/route53-dynamic-dns
 $ cd route53-dynamic-dns
@@ -52,12 +53,16 @@ You have the option to pass [Environment Variables](#environment-variables) at r
 ```bash
 $ cp .env.example .env
 $ vi .env
+$ \#Update .env with values and save file
 ```
 
 ### Installation
+Install dependencies from `package.json`.
 ```bash
 $ npm install
 ```
+
+Start Node.js process which will run forever (or until process is stopped by user).
 ```bash
 $ npm start
 ```
@@ -89,7 +94,7 @@ $ docker run -d -t -i --rm \
 ```
 
 # Logs
-Application logs are written to `application.log` in root project directory.
+Application logs are written to `application.log` in root project directory.  Log files are compressed and archived after reaching 10MB in size.  The most recent 3 archives are kept in rotation.  All other archives are deleted to keep footprint small.
 
 # License
 ## MIT
