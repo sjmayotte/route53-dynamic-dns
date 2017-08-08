@@ -6,6 +6,8 @@ const fs = require('fs');
 const dns = require('dns');
 const AWS = require('aws-sdk');
 const log4js = require('log4js');
+const dotenv = require('dotenv');
+const isDocker = require('is-docker');
 
 //Configure logging using log4js
 log4js.configure({
@@ -24,27 +26,82 @@ log4js.configure({
 const logger = log4js.getLogger();
 logger.level = 'info';
 
-//Assumes that environment variables are only used in Docker container
-if (process.env.NODE_ENV == 'Docker')
-    {
-        console.log("process.env.NODE_ENV =", process.env.NODE_ENV);
-    }
+//Useful information displayed in console when process is started by NPM
+console.log("Log4js initialized with level", logger.level.levelStr, "\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh");
+
+//Determine if process is running inside a Docker Container
+if (isDocker()) {
+    //Must pass environment variables when running inside a Docker Container
+    logger.info("Running inside a Docker container");
+}
 else {
-    var config = require('./config.js');
+    //Not running inside Docker container.  Get environment variables from .env file
+    //Load environment variables
+    const dotenvresult = dotenv.config();
+
+    //Handle error loading required environment variables from .env file
+    if (dotenvresult.error) {
+        logger.error(dotenvresult.error);
+        throw dotenvresult.error;
+    }
+    else {
+        logger.info("Successfully loaded environment variables from .env file");
+    }
 }
 
-//Global configuration variables set at runtime or in config.js
-var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || config.aws_access_key_id;
-var AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY || config.aws_secret_access_key;
-var AWS_REGION = process.env.AWS_REGION || config.aws_region;
-var ROUTE53_HOSTED_ZONE_ID = process.env.ROUTE53_HOSTED_ZONE_ID || config.route53_hosted_zone_id;
-var ROUTE53_DOMAIN = process.env.ROUTE53_DOMAIN || config.route53_domain;
-var ROUTE53_TYPE = process.env.ROUTE53_TYPE || config.route53_type;
-var ROUTE53_TTL = process.env.ROUTE53_TTL || config.route53_ttl;
-var SES_TO_ADDRESS = process.env.SES_TO_ADDRESS || config.ses_to_address;
-var SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS || config.ses_from_address;
-var SEND_EMAIL_SES = process.env.SEND_EMAIL_SES || config.send_email_ses;
-var UPDATE_FREQUENCY = process.env.UPDATE_FREQUENCY || config.update_frequency;
+//Determine if required environment variables are set before starting to execute process
+if (typeof process.env.AWS_ACCESS_KEY_ID === 'undefined' || process.env.AWS_ACCESS_KEY_ID === null) {
+    logger.error("AWS_ACCESS_KEY_ID is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for AWS_ACCESS_KEY_ID and try again.");
+    throw "AWS_ACCESS_KEY_ID is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for AWS_ACCESS_KEY_ID and try again.";
+}
+if (typeof process.env.AWS_SECRET_ACCESS_KEY === 'undefined' || process.env.AWS_SECRET_ACCESS_KEY === null) {
+    logger.error("AWS_SECRET_ACCESS_KEY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for AWS_SECRET_ACCESS_KEY and try again.");
+    throw "AWS_SECRET_ACCESS_KEY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for AWS_SECRET_ACCESS_KEY and try again.";
+}
+if (typeof process.env.AWS_REGION === 'undefined' || process.env.AWS_REGION === null) {
+    logger.error("AWS_REGION is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for AWS_REGION and try again.");
+    throw "AWS_REGION is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for AWS_REGION and try again.";
+}
+if (typeof process.env.ROUTE53_HOSTED_ZONE_ID === 'undefined' || process.env.ROUTE53_HOSTED_ZONE_ID === null) {
+    logger.error("ROUTE53_HOSTED_ZONE_ID is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_HOSTED_ZONE_ID and try again.");
+    throw "ROUTE53_HOSTED_ZONE_ID is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_HOSTED_ZONE_ID and try again.";
+}
+if (typeof process.env.ROUTE53_DOMAIN === 'undefined' || process.env.ROUTE53_DOMAIN === null) {
+    logger.error("ROUTE53_DOMAIN is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_DOMAIN and try again.");
+    throw "ROUTE53_DOMAIN is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_DOMAIN and try again.";
+}
+if (typeof process.env.ROUTE53_TYPE === 'undefined' || process.env.ROUTE53_TYPE === null) {
+    logger.error("ROUTE53_TYPE is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_TYPE and try again.");
+    throw "ROUTE53_TYPE is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_TYPE and try again.";
+}
+if (typeof process.env.ROUTE53_TTL === 'undefined' || process.env.ROUTE53_TTL === null) {
+    logger.error("ROUTE53_TTL is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_TTL and try again.");
+    throw "ROUTE53_TTL is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_TTL and try again.";
+}
+if (typeof process.env.SEND_EMAIL_SES === 'undefined' || process.env.SEND_EMAIL_SES === null) {
+    logger.error("SEND_EMAIL_SES is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SEND_EMAIL_SES and try again.");
+    throw "SEND_EMAIL_SES is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SEND_EMAIL_SES and try again.";
+}
+if (typeof process.env.SES_TO_ADDRESS === 'undefined' || process.env.SES_TO_ADDRESS === null) {
+    logger.error("SES_TO_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_TO_ADDRESS and try again.");
+    throw "SES_TO_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_TO_ADDRESS and try again.";
+}
+if (typeof process.env.SES_FROM_ADDRESS === 'undefined' || process.env.SES_FROM_ADDRESS === null) {
+    logger.error("SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.");
+    throw "SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.";
+}
+
+//Global configuration variables set using environment variables
+var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+var AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+var AWS_REGION = process.env.AWS_REGION;
+var ROUTE53_HOSTED_ZONE_ID = process.env.ROUTE53_HOSTED_ZONE_ID;
+var ROUTE53_DOMAIN = process.env.ROUTE53_DOMAIN;
+var ROUTE53_TYPE = process.env.ROUTE53_TYPE;
+var ROUTE53_TTL = process.env.ROUTE53_TTL;
+var SEND_EMAIL_SES = process.env.SEND_EMAIL_SES;
+var SES_TO_ADDRESS = process.env.SES_TO_ADDRESS;
+var SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS;
 
 //Local variables for the process
 var LastKnownIPFileName = 'Last-Known-IP.log';
@@ -53,7 +110,7 @@ var previousIP = '';
 var SentErrorEmail = false;
 var FirstRunStateFileName = 'First-Run-State.log';
 
-//Set required AWS configuration variables
+//Set required configuration variables for AWS-SDK
 AWS.config.update(
     {
         region: AWS_REGION,
@@ -62,7 +119,7 @@ AWS.config.update(
     }
 );
 
-//Create objects used to interact with AWS-SDK
+//Create required AWS-SDK objects
 var route53 = new AWS.Route53();
 var ses = new AWS.SES();
 
@@ -353,4 +410,4 @@ var RunScript = function () {
 //Execute function RunScript at interval set in UPDATE_FREQUENCY (ex: 60000, which equals 1 minute)
 //setInterval(RunScript, UPDATE_FREQUENCY);
 
-RunScript();
+//RunScript();

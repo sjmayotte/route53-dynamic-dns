@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "aws-sdk": "^2.86.0",
+    "dotenv": "^4.0.0",
+    "is-docker": "^1.1.0",
     "log4js": "^2.2.0"
   },
   "engines": {
