@@ -27,4 +27,4 @@ RUN npm install
 COPY . /usr/src/app
 
 # Run server.js every 30 seconds
-CMD sh run_forever.sh
+CMD ["npm", "start"]

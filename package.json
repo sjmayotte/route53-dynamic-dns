@@ -5,11 +5,12 @@
   "author": "Steven Mayotte <mayots@gmail.com>",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node startup.js"
   },
   "dependencies": {
     "aws-sdk": "^2.86.0",
     "dotenv": "^4.0.0",
+    "forever-monitor": "^1.7.1",
     "is-docker": "^1.1.0",
     "log4js": "^2.2.0"
   },

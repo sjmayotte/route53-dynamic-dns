@@ -10,9 +10,10 @@ const dotenv = require('dotenv');
 const isDocker = require('is-docker');
 
 //Configure logging using log4js
+//Max log size is 10MB with rotation keeping no more than 3 backups (backups are compressed)
 log4js.configure({
     appenders: {
-        app: { type: 'file', filename: 'application.log' }
+        app: { type: 'file', filename: 'application.log', maxLogSize: 10000000, backups: 3, compress: true }
     },
     categories: {
         default: {
@@ -90,6 +91,10 @@ if (typeof process.env.SES_FROM_ADDRESS === 'undefined' || process.env.SES_FROM_
     logger.error("SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.");
     throw "SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.";
 }
+if (typeof process.env.UPDATE_FREQUENCY === 'undefined' || process.env.UPDATE_FREQUENCY === null) {
+    logger.error("UPDATE_FREQUENCY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for UPDATE_FREQUENCY and try again.");
+    throw "UPDATE_FREQUENCY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for UPDATE_FREQUENCY and try again.";
+}
 
 //Global configuration variables set using environment variables
 var AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
@@ -102,13 +107,14 @@ var ROUTE53_TTL = process.env.ROUTE53_TTL;
 var SEND_EMAIL_SES = process.env.SEND_EMAIL_SES;
 var SES_TO_ADDRESS = process.env.SES_TO_ADDRESS;
 var SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS;
+var UPDATE_FREQUENCY = process.env.UPDATE_FREQUENCY;
 
 //Local variables for the process
 var LastKnownIPFileName = 'Last-Known-IP.log';
 var currentIP = '';
 var previousIP = '';
 var SentErrorEmail = false;
-var FirstRunStateFileName = 'First-Run-State.log';
+var FirstRun = true;
 
 //Set required configuration variables for AWS-SDK
 AWS.config.update(
@@ -382,32 +388,15 @@ var SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMess
 
 //Wrap up execution logic into a function
 var RunScript = function () {
-    //Determine if file exists
-    fs.stat(FirstRunStateFileName, function (err, stat) {
-        if (err && err.code == 'ENOENT') {
-            //File doesn't exist.  Create a file with currentIP
-            fs.writeFile(FirstRunStateFileName, 'True', (err) => {
-                if (err) {
-                    logger.error('Unable to write true in', FirstRunStateFileName, 'Error code:', err.code);
-                    SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />'+ err.stack);
-                }
-                else {
-                    logger.info('Updated', FirstRunStateFileName, 'with value of true');
-                }
-            });
-            //This is the first run
-            logger.info('First run of process.')
-            RemoveFileNameIfItExists(LastKnownIPFileName);
-        }
-        else {
-            logger.info(FirstRunStateFileName, 'already exists.  Setting FirstRun = false');
-            //This is NOT the first run
-            DeterminePublicIP();
-        }
-    });
+    if (FirstRun){
+        logger.info('First run of process.')
+        RemoveFileNameIfItExists(LastKnownIPFileName);
+        FirstRun = false;
+    }
+    else {
+        DeterminePublicIP();
+    }
 };
 
-//Execute function RunScript at interval set in UPDATE_FREQUENCY (ex: 60000, which equals 1 minute)
-//setInterval(RunScript, UPDATE_FREQUENCY);
-
-RunScript();
+//Execute function RunScript at interval set in UPDATE_FREQUENCY (ex: 60000, which equals 60 seconds or 1 minute)
+setInterval(RunScript, UPDATE_FREQUENCY);

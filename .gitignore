@@ -3,6 +3,9 @@
 # Logs
 logs
 *.log
+*.log.1.gz
+*.log.2.gz
+*.log.3.gz
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
