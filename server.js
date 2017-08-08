@@ -7,10 +7,27 @@ const dns = require('dns');
 const AWS = require('aws-sdk');
 const log4js = require('log4js');
 
+//Configure logging using log4js
+log4js.configure({
+    appenders: {
+        app: { type: 'file', filename: 'application.log' }
+    },
+    categories: {
+        default: {
+            appenders: [ 'app' ],
+            level: 'info'
+         }
+    }
+});
+
+//Initialize logging
+const logger = log4js.getLogger();
+logger.level = 'info';
+
 //Assumes that environment variables are only used in Docker container
 if (process.env.NODE_ENV == 'Docker')
     {
-        return;
+        console.log("process.env.NODE_ENV =", process.env.NODE_ENV);
     }
 else {
     var config = require('./config.js');
@@ -28,19 +45,6 @@ var SES_TO_ADDRESS = process.env.SES_TO_ADDRESS || config.ses_to_address;
 var SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS || config.ses_from_address;
 var SEND_EMAIL_SES = process.env.SEND_EMAIL_SES || config.send_email_ses;
 var UPDATE_FREQUENCY = process.env.UPDATE_FREQUENCY || config.update_frequency;
-
-console.log("process.env.AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
-console.log("process.env.AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
-console.log("process.env.AWS_REGION:", process.env.AWS_REGION);
-console.log("process.env.ROUTE53_HOSTED_ZONE_ID:", process.env.ROUTE53_HOSTED_ZONE_ID);
-console.log("process.env.ROUTE53_DOMAIN:", process.env.ROUTE53_DOMAIN);
-console.log("process.env.ROUTE53_TYPE:", process.env.ROUTE53_TYPE);
-console.log("process.env.ROUTE53_TTL:", process.env.ROUTE53_TTL);
-console.log("process.env.SEND_EMAIL_SES:", process.env.SEND_EMAIL_SES);
-console.log("process.env.SES_TO_ADDRESS:", process.env.SES_TO_ADDRESS);
-console.log("process.env.SES_FROM_ADDRESS:", process.env.SES_FROM_ADDRESS);
-console.log("process.env.UPDATE_FREQUENCY:", process.env.UPDATE_FREQUENCY);
-console.log("process.env.NODE_EN:", process.env.NODE_ENV);
 
 //Local variables for the process
 var LastKnownIPFileName = 'Last-Known-IP.log';
@@ -61,23 +65,6 @@ AWS.config.update(
 //Create objects used to interact with AWS-SDK
 var route53 = new AWS.Route53();
 var ses = new AWS.SES();
-
-//Configure logging using log4js
-log4js.configure({
-    appenders: {
-        app: { type: 'file', filename: 'application.log' }
-    },
-    categories: {
-        default: {
-            appenders: [ 'app' ],
-            level: 'info'
-         }
-    }
-});
-
-//Initialize logging
-const logger = log4js.getLogger();
-logger.level = 'info';
 
 //Determine if file exists
 var RemoveFileNameIfItExists = function (filename) {
