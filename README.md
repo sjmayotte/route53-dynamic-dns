@@ -53,7 +53,7 @@ You have the option to pass [Environment Variables](#environment-variables) at r
 ```bash
 $ cp .env.example .env
 $ vi .env
-$ \#Update .env with values and save file
+$ #Update .env with values and save file
 ```
 
 ### Installation
