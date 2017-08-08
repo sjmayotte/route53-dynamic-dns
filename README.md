@@ -43,6 +43,7 @@ docker run --rm \
 * `NODE_ENV` - Always set to "Docker" when running in a container
 
 ## License
+### MIT
 Route53 Dynamic DNS is licensed under the MIT License (https://opensource.org/licenses/MIT).  A copy of MIT License is included in this repository.
 
 ### Attribution
