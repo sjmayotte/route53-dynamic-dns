@@ -27,7 +27,7 @@ const logger = log4js.getLogger();
 logger.level = 'info';
 
 //Useful information displayed in console when process is started by NPM
-console.log("Log4js initialized with level", logger.level.levelStr, "\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh");
+console.log("Log4js initialized with level", logger.level.levelStr, "\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n");
 
 //Determine if process is running inside a Docker Container
 if (isDocker()) {
@@ -410,4 +410,4 @@ var RunScript = function () {
 //Execute function RunScript at interval set in UPDATE_FREQUENCY (ex: 60000, which equals 1 minute)
 //setInterval(RunScript, UPDATE_FREQUENCY);
 
-//RunScript();
+RunScript();
