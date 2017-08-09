@@ -57,9 +57,9 @@ Automated build triggers with every `git push` to `master` branch.  This version
 Stable version built from `release/v1.0` branch.  The code is also available as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.0`.
 
 ### Pull Image
-Pull image from DockerHub.  Replace [version] with desired version (ex: v1.0).
+Pull image from DockerHub.  Replace `[version]` with desired version (ex: `v1.0`).
 ```bash
-$ docker pull sjmayotte/route53-dynamic-dns:`[verison]`
+$ docker pull sjmayotte/route53-dynamic-dns:[verison]
 ```
 
 ### Run Container
@@ -78,7 +78,7 @@ $ docker run -d -t -i --rm \
     -e SES_TO_ADDRESS= \
     -e SES_FROM_ADDRESS= \
     -e UPDATE_FREQUENCY= \
-    sjmayotte/route53-dynamic-dns:`[verison]`
+    sjmayotte/route53-dynamic-dns:[verison]
 ```
 
 ### View Useful Container Data
@@ -108,7 +108,7 @@ Steps below assume you have Node.js and NPM installed on machine.  If you do not
 ### Download Release
 Download release `version` from [release repository](https://github.com/sjmayotte/route53-dynamic-dns/releases).  For example, you can use `v1.0.tar.gz` to download source for release tag `v1.0`.
 ```bash
-$ curl -sL https://github.com/sjmayotte/route53-dynamic-dns/archive/`[version]` | tar xz
+$ curl -sL https://github.com/sjmayotte/route53-dynamic-dns/archive/[version] | tar xz
 $ cd route53-dynamic-dns
 ```
 
