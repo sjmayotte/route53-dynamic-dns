@@ -57,9 +57,9 @@ Automated build triggers with every `git push` to `master` branch.  This version
 Stable version built from `release/v1.0` branch.  The code is also available as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.0`.
 
 ### Pull Image
-Pull image from DockerHub.  Replace [version] with desired version (ex: route53-dynamic-dns:v1.0).
+Pull image from DockerHub.  Replace [version] with desired version (ex: v1.0).
 ```bash
-$ docker pull sjmayotte/[version]
+$ docker pull sjmayotte/route53-dynamic-dns:`[verison]`
 ```
 
 ### Run Container
@@ -78,7 +78,7 @@ $ docker run -d -t -i --rm \
     -e SES_TO_ADDRESS= \
     -e SES_FROM_ADDRESS= \
     -e UPDATE_FREQUENCY= \
-    sjmayotte/route53-dynamic-dns
+    sjmayotte/route53-dynamic-dns:`[verison]`
 ```
 
 ### View Useful Container Data
@@ -103,12 +103,12 @@ $ docker exec -it [CONTAINER ID] sh
 ```
 
 ## Node.js Process
-Steps below assume you have Node.js and NPM installed on machine.  If you do not, please [download and install Node.js and NPM](https://docs.npmjs.com/getting-started/what-is-npm) before proceeding.
+Steps below assume you have Node.js and NPM installed on machine.  If you do not, please [download and install Node.js and NPM](https://nodejs.org/en/download/) before proceeding.
 
 ### Download Release
-Download [release version](https://github.com/sjmayotte/route53-dynamic-dns/releases).  Example: `v1.0`.
+Download release `version` from [release repository](https://github.com/sjmayotte/route53-dynamic-dns/releases).  For example, you can use `v1.0.tar.gz` to download source for release tag `v1.0`.
 ```bash
-$ curl -sL https://github.com/sjmayotte/route53-dynamic-dns/archive/v1.0.tar.gz | tar xz
+$ curl -sL https://github.com/sjmayotte/route53-dynamic-dns/archive/`[version]` | tar xz
 $ cd route53-dynamic-dns
 ```
 
@@ -117,7 +117,7 @@ You have the option to pass [environment variables](#environment-variables) at r
 ```bash
 $ cp .env.example .env
 $ vi .env
-$ #Update .env with values and save file
+$ # Update .env with values and save file
 $ rm .env.example
 ```
 
@@ -150,7 +150,7 @@ If running in Docker Container use the following command to access a shell:
 Application logs are written to `application.log` in root project directory.  Log files are compressed and archived after reaching 10MB in size.  The most recent 3 archives are kept in rotation.  All other archives are deleted to keep footprint small.
 
 # Issues
-If you run into any issues, check to make sure all variables are set properly in `.env`.  If they are, please open an [issue](https://github.com/sjmayotte/route53-dynamic-dns/issues) and provide as much content as possible.
+If you run into any issues, check to make sure all variables are set properly in `.env` or passed properly into Docker Container at runtime.  If you are sure your environment variables are correct, please open an [issue](https://github.com/sjmayotte/route53-dynamic-dns/issues) and provide as much detail as possible.
 
 # License
 ## MIT
