@@ -3,20 +3,33 @@
 
 Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address (from [OpenDNS](https://diagnostic.opendns.com/myip)).  No cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient with the ability to run as a [Node.js process](#nodejs-process) or in a [Docker Container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/).
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Table of Contents
+
 - [Environment Variables](#environment-variables)
 - [Usage](#usage)
+  - [Docker](#docker)
+    - [Versions](#versions)
+      - [`route53-dynamic-dns:latest`](#route53-dynamic-dnslatest)
+      - [`route53-dynamic-dns:v1.0`](#route53-dynamic-dnsv10)
+    - [Pull Image](#pull-image)
+    - [Run Container](#run-container)
+    - [View Useful Container Data](#view-useful-container-data)
   - [Node.js Process](#nodejs-process)
     - [Download Release](#download-release)
     - [Set Environment Variables](#set-environment-variables)
     - [Installation](#installation)
-  - [Docker](#docker)
-    - [Pull Image](#pull-image)
-    - [Run Container](#run-container)
+    - [Run Process](#run-process)
 - [Logs](#logs)
+  - [`STDOUT`](#stdout)
+  - [`application.log`](#applicationlog)
+- [Issues](#issues)
 - [License](#license)
   - [MIT](#mit)
   - [Attribution](#attribution)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Environment Variables
 Environment variables are required to run the process as standalone Node.js process or Docker Container.
