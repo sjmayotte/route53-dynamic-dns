@@ -1,15 +1,12 @@
 # sjmayotte/route53-dynamic-dns
 [![Docker Build Statu](https://img.shields.io/docker/build/sjmayotte/route53-dynamic-dns.svg)](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fsjmayotte%2Froute53-dynamic-dns.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fsjmayotte%2Froute53-dynamic-dns?ref=badge_shield) [![](https://images.microbadger.com/badges/image/sjmayotte/route53-dynamic-dns.svg)](https://microbadger.com/images/sjmayotte/route53-dynamic-dns "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/sjmayotte/route53-dynamic-dns.svg)](https://microbadger.com/images/sjmayotte/route53-dynamic-dns "Get your own version badge on microbadger.com") [![Docker Pulls](https://img.shields.io/docker/pulls/sjmayotte/route53-dynamic-dns.svg)](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/)
 
-Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address (from [OpenDNS](https://diagnostic.opendns.com/myip)).  No cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient with the ability to run as a [standalone node.js process](#standalone-nodejs-process) or in a [Docker Container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/).
+Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address (from [OpenDNS](https://diagnostic.opendns.com/myip)).  No cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient with the ability to run as a [Node.js process](#nodejs-process) or in a [Docker Container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/).
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Table of Contents
-
 - [Environment Variables](#environment-variables)
 - [Usage](#usage)
-  - [Standalone Node.js Process](#standalone-nodejs-process)
+  - [Node.js Process](#nodejs-process)
     - [Clone Repository](#clone-repository)
     - [Set Environment Variables](#set-environment-variables)
     - [Installation](#installation)
@@ -20,8 +17,6 @@ Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current
 - [License](#license)
   - [MIT](#mit)
   - [Attribution](#attribution)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Environment Variables
 Environment variables are required to run the process as standalone Node.js process or Docker Container.
@@ -38,9 +33,7 @@ Environment variables are required to run the process as standalone Node.js proc
 * `UPDATE_FREQUENCY` - `integer` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
 
 # Usage
-Can be run as [standalone Node.js process](#standalone-node.js-process) or [Docker Container](#docker).  
-
-## Standalone Node.js Process
+## Node.js Process
 ### Clone Repository
 Download latest code from Github repository.
 ```bash
@@ -68,7 +61,7 @@ $ npm start
 ```
 
 ## Docker
-This image is built using official [`node:alpine`](https://hub.docker.com/_/node/) DockerHub image, which runs on the popular [Alpine Linux project](http://alpinelinux.org). Alpine Linux is much smaller than most distribution base images (~5MB), which leads to much slimmer images in general.
+This image is built using official [`node:alpine`](https://hub.docker.com/_/node/) image, which runs on the popular [Alpine Linux project](http://alpinelinux.org). Alpine Linux is much smaller than most distribution base images (~5MB), which leads to much slimmer images in general.
 
 ### Pull Image
 ```bash
