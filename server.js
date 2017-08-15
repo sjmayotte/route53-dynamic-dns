@@ -132,7 +132,7 @@ var ses = new AWS.SES();
 //Determine if file exists
 var RemoveFileNameIfItExists = function (filename) {
     fs.stat(filename, function (err, stat) {
-        if (err && err.code == 'ENOENT') {
+        if (err && err.code === 'ENOENT') {
             //File doesn't exist.  Create a file with currentIP
             logger.info(filename, 'does not exist.  This file is used to cache the current IP in Route53.  The file will be created when it is needed');
             DeterminePublicIP();
@@ -187,7 +187,7 @@ var DeterminePublicIP = function () {
 var FindLastKnownIPLocally = function () {
     //Determine if file exists
     fs.stat(LastKnownIPFileName, function (err, stat) {
-        if (err && err.code == 'ENOENT') {
+        if (err && err.code === 'ENOENT') {
             //File doesn't exist.  Create a file with currentIP
             logger.info(LastKnownIPFileName, 'does not exist.  The file will be created');
 
