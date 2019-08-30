@@ -11,24 +11,26 @@ const isDocker = require('is-docker');
 
 //Configure logging using log4js
 //Max log size is 10MB with rotation keeping no more than 3 backups (backups are compressed)
-log4js.configure({
-    appenders: {
-        app: { type: 'file', filename: 'application.log', maxLogSize: 10000000, backups: 3, compress: true }
-    },
-    categories: {
-        default: {
-            appenders: [ 'app' ],
-            level: 'info'
-         }
-    }
-});
+if(!isDocker) {
+    log4js.configure({
+        appenders: {
+            app: { type: 'file', filename: 'application.log', maxLogSize: 10000000, backups: 3, compress: true }
+        },
+        categories: {
+            default: {
+                appenders: [ 'app' ],
+                level: 'info'
+             }
+        }
+    });
+}
 
 //Initialize logging
 const logger = log4js.getLogger();
 logger.level = 'info';
 
 //Useful information displayed in console when process is started by NPM
-console.log("Log4js initialized with level", logger.level.levelStr, "\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n");
+console.log("Log4js initialized with level", logger.level.levelStr,)
 
 //Determine if process is running inside a Docker Container
 if (isDocker()) {
@@ -36,6 +38,7 @@ if (isDocker()) {
     logger.info("Running inside a Docker container");
 }
 else {
+    console.log("Logs located in application.log in working directory\n\n");
     //Not running inside Docker container.  Get environment variables from .env file
     //Load environment variables
     const dotenvresult = dotenv.config();
