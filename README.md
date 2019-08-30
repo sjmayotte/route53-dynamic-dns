@@ -39,6 +39,7 @@ Environment variables are required to run the process as standalone Node.js proc
 * `SES_TO_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'To' address for email; ex: "admin@example.com"
 * `SES_FROM_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'From' address for email; ex: "notification@example.com"
 * `UPDATE_FREQUENCY` - `integer` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
+* `IPCHECKER` - `string` - Public IP checker service. 'opendns' or 'ifconfig.co'
 
 # Usage
 ## Docker
@@ -73,6 +74,7 @@ $ docker run -d -t -i --rm \
     -e SES_TO_ADDRESS= \
     -e SES_FROM_ADDRESS= \
     -e UPDATE_FREQUENCY= \
+    -e IPCHECKER= \
     sjmayotte/route53-dynamic-dns:[verison]
 ```
 
