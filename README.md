@@ -4,6 +4,8 @@
 Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address (from [OpenDNS](https://diagnostic.opendns.com/myip)).  No cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient with the ability to run as a [Node.js process](#nodejs-process) or in a [Docker Container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/).
 
 # Table of Contents
+- [sjmayotte/route53-dynamic-dns](#sjmayotteroute53-dynamic-dns)
+- [Table of Contents](#table-of-contents)
 - [Environment Variables](#environment-variables)
 - [Usage](#usage)
   - [Docker](#docker)
@@ -39,7 +41,7 @@ Environment variables are required to run the process as standalone Node.js proc
 * `SES_TO_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'To' address for email; ex: "admin@example.com"
 * `SES_FROM_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'From' address for email; ex: "notification@example.com"
 * `UPDATE_FREQUENCY` - `integer` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
-* `IPCHECKER` - `string` - Public IP checker service. 'opendns' or 'ifconfig.co'
+* `IPCHECKER` - `string` - Public IP checker service. 'opendns' or 'ifconfig.co'. Defaults to opendns.
 
 # Usage
 ## Docker
