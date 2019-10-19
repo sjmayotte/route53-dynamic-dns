@@ -270,7 +270,7 @@ var CompareCurrentIPtoLastKnownIP = function () {
     }
     else {
         //They don't match, so update Route53
-        logger.info('Current Public IP does not match last known Public IP\nCurrent Public IP (' + ipchecker[IPCHECKER].fullname + '):', currentIP, '\nLast Known Public IP (', LastKnownIPFileName, '):', previousIP);
+        logger.info('Current Public IP does not match last known Public IP\nCurrent Public IP (' + ipChecker[IPCHECKER].fullname + '):', currentIP, '\nLast Known Public IP (', LastKnownIPFileName, '):', previousIP);
         UpdateEntryInRoute53();
     }
 };
