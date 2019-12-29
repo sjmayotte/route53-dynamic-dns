@@ -1,7 +1,7 @@
 # sjmayotte/route53-dynamic-dns
 [![Docker Build Statu](https://img.shields.io/docker/build/sjmayotte/route53-dynamic-dns.svg)](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fsjmayotte%2Froute53-dynamic-dns.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fsjmayotte%2Froute53-dynamic-dns?ref=badge_shield) [![](https://images.microbadger.com/badges/image/sjmayotte/route53-dynamic-dns.svg)](https://microbadger.com/images/sjmayotte/route53-dynamic-dns "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/sjmayotte/route53-dynamic-dns.svg)](https://microbadger.com/images/sjmayotte/route53-dynamic-dns "Get your own version badge on microbadger.com") [![Docker Pulls](https://img.shields.io/docker/pulls/sjmayotte/route53-dynamic-dns.svg)](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/)
 
-Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address (from [OpenDNS](https://diagnostic.opendns.com/myip)).  No cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient with the ability to run as a [Node.js process](#nodejs-process) or in a [Docker Container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/).
+Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address (from [OpenDNS](https://diagnostic.opendns.com/myip) or [ifconfig](https://ifconfig.co/ip)).  No cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient with the ability to run as a [Node.js process](#nodejs-process) or in a [Docker Container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/).
 
 # Table of Contents
 - [sjmayotte/route53-dynamic-dns](#sjmayotteroute53-dynamic-dns)
@@ -92,11 +92,11 @@ Image is built from official [`node:alpine`](https://hub.docker.com/_/node/) ima
 #### `route53-dynamic-dns:latest`
 Automated build triggers with every `git push` to `master` branch.  This version is not guarenteed to be stable.  If you are looking for a stable version, please use `route53-dynamic-dns:v1.0`.
 
-#### `route53-dynamic-dns:v1.0`
-Stable version built from `release/v1.0` branch.  The code is also available as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.0`.
+#### `route53-dynamic-dns:v1.1`
+Stable version built from `release/v1.1` branch.  The code is also available as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.1`.
 
 ### Pull Image
-Pull image from DockerHub.  Replace `[version]` with desired version (ex: `v1.0`).
+Pull image from DockerHub.  Replace `[version]` with desired version (ex: `v1.1`).
 ```bash
 $ docker pull sjmayotte/route53-dynamic-dns:[verison]
 ```
@@ -146,7 +146,7 @@ $ docker exec -it [CONTAINER ID] sh
 Steps below assume you have Node.js and NPM installed on machine.  If you do not, please [download and install Node.js and NPM](https://nodejs.org/en/download/) before proceeding.
 
 ### Download Release
-Download release `version` from [release repository](https://github.com/sjmayotte/route53-dynamic-dns/releases).  For example, you can use `v1.0.tar.gz` to download source for release tag `v1.0`.
+Download release `version` from [release repository](https://github.com/sjmayotte/route53-dynamic-dns/releases).  For example, you can use `v1.1.tar.gz` to download source for release tag `v1.1`.
 ```bash
 $ curl -sL https://github.com/sjmayotte/route53-dynamic-dns/archive/[version] | tar xz
 $ cd route53-dynamic-dns
