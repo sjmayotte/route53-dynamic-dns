@@ -14,7 +14,7 @@ Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current
   - [Docker](#docker)
     - [Versions](#versions)
       - [`route53-dynamic-dns:latest`](#route53-dynamic-dnslatest)
-      - [`route53-dynamic-dns:v1.0`](#route53-dynamic-dnsv10)
+      - [`route53-dynamic-dns:v1.1`](#route53-dynamic-dnsv11)
     - [Pull Image](#pull-image)
     - [Run Container](#run-container)
     - [View Useful Container Data](#view-useful-container-data)
@@ -40,7 +40,7 @@ Environment variables are required to run the process as standalone Node.js proc
 * `ROUTE53_DOMAIN` - `string` - AWS Route53 FQDN; ex: "home.example.com"
 * `ROUTE53_TYPE` - `string` - AWS Route 53 record type for FQDN; ex: "A"
 * `ROUTE53_TTL` - `integer` - AWS Route 53 TTL in seconds for FQDN; ex: 60
-* `SEND_EMAIL_SES` - `boolean` - Use AWS SES to send notification email. ex: true
+* `SEND_EMAIL_SES` - `boolean` - Use AWS SES to send notification email. ex: true. NOTE: there is a known issue where setting value to false will not suppress emails.  If you really don't want emails there is a workaround outlined in [Issue #8](https://github.com/sjmayotte/route53-dynamic-dns/issues/8)
 * `SES_TO_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'To' address for email; ex: "admin@example.com"
 * `SES_FROM_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'From' address for email; ex: "notification@example.com"
 * `UPDATE_FREQUENCY` - `integer` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
@@ -90,7 +90,7 @@ Image is built from official [`node:alpine`](https://hub.docker.com/_/node/) ima
 
 ### Versions
 #### `route53-dynamic-dns:latest`
-Automated build triggers with every `git push` to `master` branch.  This version is not guarenteed to be stable.  If you are looking for a stable version, please use `route53-dynamic-dns:v1.0`.
+Automated build triggers with every `git push` to `master` branch.  This version is not guarenteed to be stable.  If you are looking for a stable version, please use `route53-dynamic-dns:v1.1`.
 
 #### `route53-dynamic-dns:v1.1`
 Stable version built from `release/v1.1` branch.  The code is also available as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.1`.
