@@ -8,6 +8,17 @@ const AWS = require('aws-sdk');
 const log4js = require('log4js');
 const dotenv = require('dotenv');
 
+const ipChecker = {
+    'opendns' : {
+        'fullname' : "OpenDNS",
+        'url' : 'https://diagnostic.opendns.com/myip'
+    },
+    'ifconfig.co' : {
+        'fullname' : "ifconfig.co",
+        'url' : 'https://ifconfig.co/ip'
+    }
+}
+
 //Configure logging using log4js
 //Max log size is 10MB with rotation keeping no more than 3 backups (backups are compressed)
 log4js.configure({
@@ -99,6 +110,7 @@ var SEND_EMAIL_SES = process.env.SEND_EMAIL_SES;
 var SES_TO_ADDRESS = process.env.SES_TO_ADDRESS;
 var SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS;
 var UPDATE_FREQUENCY = process.env.UPDATE_FREQUENCY;
+var IPCHECKER = process.env.IPCHECKER || 'opendns';
 
 //Local variables for the process
 var LastKnownIPFileName = 'Last-Known-IP.log';
@@ -150,21 +162,22 @@ var RemoveFileName = function (filename) {
     });
 };
 
-//Determine current public IP using OpenDNS
+//Determine current public IP
 var DeterminePublicIP = function () {
     //Set string values back to empty
     currentIP = '';
     previousIP = '';
     
-    logger.info('HTTPS GET https://diagnostic.opendns.com/myip');
-    //Get public IP from OpenDNS
-    https.get('https://diagnostic.opendns.com/myip', (res) => {
+    logger.info('HTTPS GET ' + ipChecker[IPCHECKER].url);
+    //Get public IP
+    https.get(ipChecker[IPCHECKER].url, (res) => {
         logger.info('Status Code:', res.statusCode, res.statusMessage);
         res.on('data', (data) => {
             if (res.statusCode === 200) {
                 //Set current IP
                 currentIP += data;
-                logger.info('Current Public IP (OpenDNS):', currentIP);
+                currentIP = currentIP.replace(/(\r\n|\n|\r)/gm, '')
+                logger.info('Current Public IP (' + ipChecker[IPCHECKER].fullname + '):', currentIP);
                 FindLastKnownIPLocally();
             }
         });
@@ -250,7 +263,7 @@ var CompareCurrentIPtoLastKnownIP = function () {
     }
     else {
         //They don't match, so update Route53
-        logger.info('Current Public IP does not match last known Public IP\nCurrent Public IP (OpenDNS):', currentIP, '\nLast Known Public IP (', LastKnownIPFileName, '):', previousIP);
+        logger.info('Current Public IP does not match last known Public IP\nCurrent Public IP (' + ipChecker[IPCHECKER].fullname + '):', currentIP, '\nLast Known Public IP (', LastKnownIPFileName, '):', previousIP);
         UpdateEntryInRoute53();
     }
 };
