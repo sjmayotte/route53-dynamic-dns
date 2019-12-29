@@ -7,6 +7,9 @@ Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current
 - [sjmayotte/route53-dynamic-dns](#sjmayotteroute53-dynamic-dns)
 - [Table of Contents](#table-of-contents)
 - [Environment Variables](#environment-variables)
+- [Minimum AWS IAM Policy](#Minimum-AWS-IAM-Policy)
+  - [Route53](#Route53)
+  - [SES](#SES)
 - [Usage](#usage)
   - [Docker](#docker)
     - [Versions](#versions)
@@ -42,6 +45,44 @@ Environment variables are required to run the process as standalone Node.js proc
 * `SES_FROM_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'From' address for email; ex: "notification@example.com"
 * `UPDATE_FREQUENCY` - `integer` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
 * `IPCHECKER` - `string` - Public IP checker service. 'opendns' or 'ifconfig.co'. Defaults to opendns.
+
+# Minimum AWS IAM Policy
+Below are examples of minimium IAM policies for Route53 and SES.  Thanks for members of the community for posting in an issue!
+## Route53
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "route53:ChangeResourceRecordSets",
+            "Resource": "arn:aws:route53:::hostedzone/*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "route53:TestDNSAnswer",
+            "Resource": "*"
+        }
+    ]
+}
+```
+## SES
+```json
+{
+    "Effect": "Allow",
+    "Action": "ses:SendEmail",
+    "Resource": "*",
+    "Condition": {
+        "ForAllValues:StringLike": {
+            "ses:Recipients": [
+                "you@example.org"
+            ]
+        }
+    }
+}
+```
 
 # Usage
 ## Docker

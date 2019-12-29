@@ -7,7 +7,7 @@ const dns = require('dns');
 const AWS = require('aws-sdk');
 const log4js = require('log4js');
 const dotenv = require('dotenv');
-const isDocker = require('is-docker');
+
 const ipChecker = {
     'opendns' : {
         'fullname' : "OpenDNS",
@@ -18,6 +18,7 @@ const ipChecker = {
         'url' : 'https://ifconfig.co/ip'
     }
 }
+
 //Configure logging using log4js
 //Max log size is 10MB with rotation keeping no more than 3 backups (backups are compressed)
 log4js.configure({
@@ -39,24 +40,16 @@ logger.level = 'info';
 //Useful information displayed in console when process is started by NPM
 console.log("Log4js initialized with level", logger.level.levelStr, "\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n");
 
-//Determine if process is running inside a Docker Container
-if (isDocker()) {
-    //Must pass environment variables when running inside a Docker Container
-    logger.info("Running inside a Docker container");
+//Initialize dotenv to try and load .env file
+const dotenvresult = dotenv.config();
+
+//Handle error loading required environment variables from .env file
+if (dotenvresult.error) {
+    logger.info("Unable to load environment variables from .env file.  Process is likely running in a container.  Make sure you pass environment variables when starting container.");
+    logger.error(dotenvresult.error);
 }
 else {
-    //Not running inside Docker container.  Get environment variables from .env file
-    //Load environment variables
-    const dotenvresult = dotenv.config();
-
-    //Handle error loading required environment variables from .env file
-    if (dotenvresult.error) {
-        logger.error(dotenvresult.error);
-        throw dotenvresult.error;
-    }
-    else {
-        logger.info("Successfully loaded environment variables from .env file");
-    }
+    logger.info("Successfully loaded environment variables from .env file");
 }
 
 //Determine if required environment variables are set before starting to execute process
