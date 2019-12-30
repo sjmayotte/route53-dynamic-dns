@@ -18,6 +18,8 @@ Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current
     - [Pull Image](#pull-image)
     - [Run Container](#run-container)
     - [View Useful Container Data](#view-useful-container-data)
+  - [Podman](#podman)
+    - [Running Container on RHEL8 or CentOS8](#running-container-on-rhel8-or-centos8)
   - [Node.js Process](#nodejs-process)
     - [Download Release](#download-release)
     - [Set Environment Variables](#set-environment-variables)
@@ -140,6 +142,72 @@ View Node.js process log, which is written to `application.log` in project root 
 $ docker exec -it [CONTAINER ID] sh
 /usr/src/app > ls -la
 /usr/src/app > tail -f application.log
+```
+## Podman
+[Podman](https://podman.io/) is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System.  There are no daemons in the background doing stuff, and this means that Podman can be integrated into system services through `systemd`.  Podman implements almost all the Docker CLI commands (apart from the ones related to Docker Swarm, of course).
+
+### Running Container on RHEL8 or CentOS8
+Below are steps to create a service in `systemd` to run a podman container the starts on boot.
+
+If SELinux is enabled on your system, you must turn on the container_manage_cgroup boolean to run containers with systemd.
+```
+#!bash
+$ setsebool -P container_manage_cgroup on
+```
+Create service in `/etc/systemd/system/r53-dydns-container.service`.  Replace `[env]` with variables.  Example below uses `sjmayotte/route53-dynamic-dns:v1.1`
+```
+#!bash
+[Unit]
+Description=Route53 Dynamic DNS Container
+After=network.target
+
+[Service]
+Type=simple
+TimeoutStartSec=5m
+ExecStartPre=-/usr/bin/podman rm "r53-dydns"
+
+ExecStart=/usr/bin/podman run -it --name r53-dydns -e AWS_ACCESS_KEY_ID=[env] -e AWS_SECRET_ACCESS_KEY=[env] -e AWS_REGION=[env] -e ROUTE53_HOSTED_ZONE_ID=[env] -e ROUTE53_DOMAIN=[env] -e ROUTE53_TYPE=[env] -e ROUTE53_TTL=[env] -e SEND_EMAIL_SES=[env] -e SES_TO_ADDRESS=[env] -e SES_FROM_ADDRESS=[env] -e UPDATE_FREQUENCY=[env] -e IPCHECKER=[env] sjmayotte/route53-dynamic-dns:v1.1
+
+ExecReload=-/usr/bin/podman stop "r53-dydns"
+ExecReload=-/usr/bin/podman rm "r53-dydns"
+
+ExecStop=-/usr/bin/podman stop "r53-dydns"
+
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+```
+* Configure `systemd` service
+```
+#!bash
+# Reload files for systemd
+$ sudo systemctl daemon-reload
+
+# Start service
+$ sudo systemctl start r53-dydns-container.service
+
+# Determine status of service
+$ sudo systemctl status r53-dydns-container.service
+
+# If all looks good enable at start-up
+$ sudo systemctl enable r53-dydns-container.service
+```
+* You will need `sudo` privileges to see containers running under `podman`
+```
+#!bash
+# Find running containers
+$ sudo podman ls -la
+
+# Access shell in container
+$ sudo podman exec -it [container_id] sh
+
+# Stop container with systemd
+$ sudo systemctl stop r53-dydns-mayottefamily-org-container.service
+
+# Reload container with systemd
+$ sudo systemctl reload r53-dydns-mayottefamily-org-container.service
 ```
 
 ## Node.js Process
