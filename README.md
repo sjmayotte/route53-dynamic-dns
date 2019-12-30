@@ -153,7 +153,7 @@ If SELinux is enabled on your system, you must turn on the `container_manage_cgr
 ```bash
 $ setsebool -P container_manage_cgroup on
 ```
-Create service in `/etc/systemd/system/[service-name]`.  In example below we assume `[service-name]` = r53-dydns-container.service.  Replace `[env]` with [Environment Variables](#environment-variables).  Example below uses `sjmayotte/route53-dynamic-dns:v1.1`
+Create service in `/etc/systemd/system/[service-name]`.  In example below we assume `[service-name]` = `r53-dydns-container.service`.  Replace `[env]` with [Environment Variables](#environment-variables).  Example below uses `sjmayotte/route53-dynamic-dns:v1.1`
 ```bash
 [Unit]
 Description=Route53 Dynamic DNS Container
