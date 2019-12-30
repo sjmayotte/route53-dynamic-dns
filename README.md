@@ -149,7 +149,7 @@ $ docker exec -it [CONTAINER ID] sh
 ### Running Container on RHEL8 or CentOS8
 Below are steps to create a service in `systemd` to run a podman container the starts on boot.
 
-If SELinux is enabled on your system, you must turn on the `container_manage_cgroup` boolean to run containers with systemd.  You'll need to run with `sudo`
+If SELinux is enabled on your system, you must turn on the `container_manage_cgroup` boolean to run containers with systemd.
 ```bash
 $ setsebool -P container_manage_cgroup on
 ```
@@ -181,7 +181,7 @@ RestartSec=30
 [Install]
 WantedBy=multi-user.target
 ```
-* Configure `systemd` service.  You'll need to run with `sudo`.
+* Configure `systemd` service.
 ```bash
 # Reload files for systemd
 $ systemctl daemon-reload
@@ -195,7 +195,7 @@ $ systemctl status r53-dydns-container.service
 # If all looks good enable at start-up
 $ systemctl enable r53-dydns-container.service
 ```
-* You will need `sudo` to see containers running under `podman`
+* Take a look at the container that is running.  Remember to use elevated permission if needed.
 ```bash
 # Find running containers
 $ podman ls -la
