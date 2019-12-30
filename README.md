@@ -181,7 +181,7 @@ RestartSec=30
 [Install]
 WantedBy=multi-user.target
 ```
-* Configure `systemd` service.
+Configure `systemd` service.
 ```bash
 # Reload files for systemd
 $ systemctl daemon-reload
@@ -195,7 +195,7 @@ $ systemctl status r53-dydns-container.service
 # If all looks good enable at start-up
 $ systemctl enable r53-dydns-container.service
 ```
-* Take a look at the container that is running.  Remember to use elevated permission if needed.
+Take a look at the container that is running.  Remember to use elevated permission if needed.
 ```bash
 # Find running containers
 $ podman ls -la
@@ -204,10 +204,13 @@ $ podman ls -la
 $ podman exec -it [container_id] sh
 
 # Stop container with systemd
-$ systemctl stop r53-dydns-mayottefamily-org-container.service
+$ systemctl stop r53-dydns-container.service
+
+# Start container with systemd
+$ systemctl start r53-dydns-container.service
 
 # Reload container with systemd
-$ systemctl reload r53-dydns-mayottefamily-org-container.service
+$ systemctl reload r53-dydns-container.service
 ```
 
 ## Node.js Process
