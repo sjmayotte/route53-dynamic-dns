@@ -149,7 +149,7 @@ $ docker exec -it [CONTAINER ID] sh
 ### Running Container on RHEL8 or CentOS8
 Below are steps to create a service in `systemd` to run a podman container the starts on boot.
 
-If SELinux is enabled on your system, you must turn on the container_manage_cgroup boolean to run containers with systemd.
+If SELinux is enabled on your system, you must turn on the container_manage_cgroup boolean to run containers with systemd.  You'll need to run with `sudo`
 ```bash
 $ setsebool -P container_manage_cgroup on
 ```
@@ -177,33 +177,33 @@ RestartSec=30
 [Install]
 WantedBy=multi-user.target
 ```
-* Configure `systemd` service
+* Configure `systemd` service.  You'll need to run with `sudo`.
 ```bash
 # Reload files for systemd
-$ sudo systemctl daemon-reload
+$ systemctl daemon-reload
 
 # Start service
-$ sudo systemctl start r53-dydns-container.service
+$ systemctl start r53-dydns-container.service
 
 # Determine status of service
-$ sudo systemctl status r53-dydns-container.service
+$ systemctl status r53-dydns-container.service
 
 # If all looks good enable at start-up
-$ sudo systemctl enable r53-dydns-container.service
+$ systemctl enable r53-dydns-container.service
 ```
-* You will need `sudo` privileges to see containers running under `podman`
+* You will need `sudo` to see containers running under `podman`
 ```bash
 # Find running containers
-$ sudo podman ls -la
+$ podman ls -la
 
 # Access shell in container
-$ sudo podman exec -it [container_id] sh
+$ podman exec -it [container_id] sh
 
 # Stop container with systemd
-$ sudo systemctl stop r53-dydns-mayottefamily-org-container.service
+$ systemctl stop r53-dydns-mayottefamily-org-container.service
 
 # Reload container with systemd
-$ sudo systemctl reload r53-dydns-mayottefamily-org-container.service
+$ systemctl reload r53-dydns-mayottefamily-org-container.service
 ```
 
 ## Node.js Process
