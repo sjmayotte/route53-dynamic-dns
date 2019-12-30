@@ -150,13 +150,11 @@ $ docker exec -it [CONTAINER ID] sh
 Below are steps to create a service in `systemd` to run a podman container the starts on boot.
 
 If SELinux is enabled on your system, you must turn on the container_manage_cgroup boolean to run containers with systemd.
-```
-#!bash
+```bash
 $ setsebool -P container_manage_cgroup on
 ```
 Create service in `/etc/systemd/system/r53-dydns-container.service`.  Replace `[env]` with variables.  Example below uses `sjmayotte/route53-dynamic-dns:v1.1`
-```
-#!bash
+```bash
 [Unit]
 Description=Route53 Dynamic DNS Container
 After=network.target
@@ -180,8 +178,7 @@ RestartSec=30
 WantedBy=multi-user.target
 ```
 * Configure `systemd` service
-```
-#!bash
+```bash
 # Reload files for systemd
 $ sudo systemctl daemon-reload
 
@@ -195,8 +192,7 @@ $ sudo systemctl status r53-dydns-container.service
 $ sudo systemctl enable r53-dydns-container.service
 ```
 * You will need `sudo` privileges to see containers running under `podman`
-```
-#!bash
+```bash
 # Find running containers
 $ sudo podman ls -la
 
