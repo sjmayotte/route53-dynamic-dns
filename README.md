@@ -42,11 +42,12 @@ Environment variables are required to run the process as standalone Node.js proc
 * `ROUTE53_DOMAIN` - `string` - AWS Route53 FQDN; ex: "home.example.com"
 * `ROUTE53_TYPE` - `string` - AWS Route 53 record type for FQDN; ex: "A"
 * `ROUTE53_TTL` - `integer` - AWS Route 53 TTL in seconds for FQDN; ex: 60
-* `SEND_EMAIL_SES` - `boolean` - Use AWS SES to send notification email. ex: true. NOTE: there is a known issue where setting value to false will not suppress emails.  If you really don't want emails there is a workaround outlined in [Issue #8](https://github.com/sjmayotte/route53-dynamic-dns/issues/8)
+* `SEND_EMAIL_SES` - `boolean`, default: `false` - Use AWS SES to send notification email. ex: true. NOTE: there is a known issue where setting value to false will not suppress emails.  If you really don't want emails there is a workaround outlined in [Issue #8](https://github.com/sjmayotte/route53-dynamic-dns/issues/8)
 * `SES_TO_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'To' address for email; ex: "admin@example.com"
 * `SES_FROM_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'From' address for email; ex: "notification@example.com"
-* `UPDATE_FREQUENCY` - `integer` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
+* `UPDATE_FREQUENCY` - `integer`, default: `60000 (1m)` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
 * `IPCHECKER` - `string` - Public IP checker service. 'opendns' or 'ifconfig.co'. Defaults to opendns.
+* `LOG_TO_STDOUT` - `boolean`, default: `false` - Flag to set log to STDOUT rather than to the application log file.
 
 # Minimum AWS IAM Policy
 Below are examples of minimium IAM policies for Route53 and SES.  Thanks for members of the community for posting in an issue!
