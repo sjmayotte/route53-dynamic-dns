@@ -1,2 +1,0 @@
-#!/bin/bash
-curl --request POST 'https://hooks.microbadger.com/images/sjmayotte/route53-dynamic-dns/MXRbkQRho_24TN1P90hYL4aHzTI='
