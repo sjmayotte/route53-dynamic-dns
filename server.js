@@ -19,23 +19,38 @@ const ipChecker = {
     }
 }
 
-//Configure logging using log4js
-//Max log size is 10MB with rotation keeping no more than 3 backups (backups are compressed)
-log4js.configure({
-    appenders: {
-        app: { type: 'file', filename: 'application.log', maxLogSize: 10000000, backups: 3, compress: true }
-    },
-    categories: {
-        default: {
-            appenders: [ 'app' ],
-            level: 'info'
-         }
-    }
-});
-
 //Initialize logging
 const logger = log4js.getLogger();
 logger.level = 'info';
+
+const LOG_TO_STDOUT = JSON.parse(process.env.LOG_TO_STDOUT || "false");
+if (LOG_TO_STDOUT) {
+    log4js.configure({
+        appenders: { 
+            app: { type: 'stdout' } 
+        },
+        categories: {
+            default: {
+                appenders: [ 'app' ],
+                level: 'info'
+            }
+        }
+    });
+}else {
+    //Configure logging using log4js
+    //Max log size is 10MB with rotation keeping no more than 3 backups (backups are compressed)
+    log4js.configure({
+        appenders: {
+            app: { type: 'file', filename: 'application.log', maxLogSize: 10000000, backups: 3, compress: true }
+        },
+        categories: {
+            default: {
+                appenders: [ 'app' ],
+                level: 'info'
+            }
+        }
+    });
+}
 
 //Useful information displayed in console when process is started by NPM
 console.log("Log4js initialized with level", logger.level.levelStr, "\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n");
@@ -85,17 +100,22 @@ if (typeof process.env.SEND_EMAIL_SES === 'undefined' || process.env.SEND_EMAIL_
     logger.error("SEND_EMAIL_SES is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SEND_EMAIL_SES and try again.");
     throw "SEND_EMAIL_SES is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SEND_EMAIL_SES and try again.";
 }
-if (typeof process.env.SES_TO_ADDRESS === 'undefined' || process.env.SES_TO_ADDRESS === null) {
-    logger.error("SES_TO_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_TO_ADDRESS and try again.");
-    throw "SES_TO_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_TO_ADDRESS and try again.";
-}
-if (typeof process.env.SES_FROM_ADDRESS === 'undefined' || process.env.SES_FROM_ADDRESS === null) {
-    logger.error("SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.");
-    throw "SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.";
-}
-if (typeof process.env.UPDATE_FREQUENCY === 'undefined' || process.env.UPDATE_FREQUENCY === null) {
-    logger.error("UPDATE_FREQUENCY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for UPDATE_FREQUENCY and try again.");
-    throw "UPDATE_FREQUENCY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for UPDATE_FREQUENCY and try again.";
+
+//Check if the "SEND_EMAIL_SES" flag is set to true before checking SES related variables.
+var SEND_EMAIL_SES = JSON.parse(process.env.SEND_EMAIL_SES || "false");
+if (SEND_EMAIL_SES) {
+    if (typeof process.env.SES_TO_ADDRESS === 'undefined' || process.env.SES_TO_ADDRESS === null) {
+        logger.error("SES_TO_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_TO_ADDRESS and try again.");
+        throw "SES_TO_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_TO_ADDRESS and try again.";
+    }
+    if (typeof process.env.SES_FROM_ADDRESS === 'undefined' || process.env.SES_FROM_ADDRESS === null) {
+        logger.error("SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.");
+        throw "SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.";
+    }
+    if (typeof process.env.UPDATE_FREQUENCY === 'undefined' || process.env.UPDATE_FREQUENCY === null) {
+        logger.error("UPDATE_FREQUENCY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for UPDATE_FREQUENCY and try again.");
+        throw "UPDATE_FREQUENCY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for UPDATE_FREQUENCY and try again.";
+    }
 }
 
 //Global configuration variables set using environment variables
@@ -106,10 +126,9 @@ var ROUTE53_HOSTED_ZONE_ID = process.env.ROUTE53_HOSTED_ZONE_ID;
 var ROUTE53_DOMAIN = process.env.ROUTE53_DOMAIN;
 var ROUTE53_TYPE = process.env.ROUTE53_TYPE;
 var ROUTE53_TTL = process.env.ROUTE53_TTL;
-var SEND_EMAIL_SES = process.env.SEND_EMAIL_SES;
 var SES_TO_ADDRESS = process.env.SES_TO_ADDRESS;
 var SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS;
-var UPDATE_FREQUENCY = process.env.UPDATE_FREQUENCY;
+var UPDATE_FREQUENCY = parseInt(process.env.UPDATE_FREQUENCY || "60000");
 var IPCHECKER = process.env.IPCHECKER || 'opendns';
 
 //Local variables for the process
@@ -331,24 +350,12 @@ var SendErrorNotificationEmail = function (EmailBodyErrorMessage) {
 
 //Send email notification using AWS SES
 var SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMessage) {
-    if (SEND_EMAIL_SES == false) {
+    //Skip sending SES email if the flag is set to false.
+    if (!SEND_EMAIL_SES) {
         logger.info('AWS SES email notification disabled.  If you want to enable, please update config.');
         return;
     }
-    
-    if (EmailMessageType == 'Route53') {
-        var EmailSubject = '[INFO]: Route53 Public IP Updated';
-        var EmailBody = 'Request successfully submitted to AWS Route53 to update ' + ROUTE53_DOMAIN + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP;
-    }
-    else if (EmailMessageType == 'Error') {
-        var EmailSubject = '[ERROR]: route53-dynamic-dns';
-        var EmailBody = EmailBodyErrorMessage;
-    }
-    else {
-        var EmailSubject = '[INFO]: route53-dynamic-dns Started';
-        var EmailBody = "route53-dynamic-dns process was started";
-    }
-    
+
     //Set params required for AWS SES
     var params = {
         Destination: {
@@ -375,6 +382,24 @@ var SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMess
         ReplyToAddresses: [ ], 
         Source: SES_FROM_ADDRESS
     };
+
+    switch (EmailMessageType) {
+        case "Route53":
+            params.Message.Subject.Data = '[INFO]: Route53 Public IP Updated';
+            params.Message.Body.Html.Data = 'Request successfully submitted to AWS Route53 to update ' + ROUTE53_DOMAIN + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP;
+            params.Message.Body.Text.Data = 'Request successfully submitted to AWS Route53 to update ' + ROUTE53_DOMAIN + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP;
+            break;
+        case "Error":
+            params.Message.Subject.Data = '[ERROR]: route53-dynamic-dns';
+            params.Message.Body.Html.Data = EmailBodyErrorMessage;
+            params.Message.Body.Text.Data = EmailBodyErrorMessage;
+            break;
+        default:
+            params.Message.Subject.Data = '[INFO]: route53-dynamic-dns Started';
+            params.Message.Body.Html.Data = "route53-dynamic-dns process was started";
+            params.Message.Body.Text.Data = "route53-dynamic-dns process was started";
+            break;
+    }
     
     logger.info('Initiating request to AWS SES (Method: sendEmail)');
 
