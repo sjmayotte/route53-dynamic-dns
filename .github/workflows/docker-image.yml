@@ -53,9 +53,9 @@ jobs:
         push: true
         tags: sjmayotte/route53-dynamic-dns:latest
         build-args: |
-            VCS_REF=$GITHUB_SHA
+            GIT_SHA=$GITHUB_SHA
             BUILD_DATE=${{ steps.date.outputs.date }}
-            VERSION='route53-dynamic-dns:latest-'$GITHUB_SHA
+            DOCKER_TAG='1.1'
         
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
