@@ -55,7 +55,7 @@ jobs:
         build-args: |
             GIT_SHA=$GITHUB_SHA
             BUILD_DATE=${{ steps.date.outputs.date }}
-            DOCKER_TAG='1.1'
+            DOCKER_TAG=1.1
         
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
