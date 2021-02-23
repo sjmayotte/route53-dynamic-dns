@@ -18,6 +18,7 @@ const ROUTE53_HOSTED_ZONE_ID = process.env.ROUTE53_HOSTED_ZONE_ID
 const ROUTE53_DOMAIN = process.env.ROUTE53_DOMAIN
 const ROUTE53_TYPE = process.env.ROUTE53_TYPE
 const ROUTE53_TTL = process.env.ROUTE53_TTL
+const SEND_EMAIL_SES = JSON.parse(process.env.SEND_EMAIL_SES || 'false')
 const SES_TO_ADDRESS = process.env.SES_TO_ADDRESS
 const SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS
 const UPDATE_FREQUENCY = parseInt(process.env.UPDATE_FREQUENCY || '60000')
@@ -112,13 +113,8 @@ if (typeof process.env.ROUTE53_TTL === 'undefined' || process.env.ROUTE53_TTL ==
   logger.error('ROUTE53_TTL is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_TTL and try again.')
   throw new Error('ROUTE53_TTL is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for ROUTE53_TTL and try again.')
 }
-if (typeof process.env.SEND_EMAIL_SES === 'undefined' || process.env.SEND_EMAIL_SES === null) {
-  logger.error('SEND_EMAIL_SES is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SEND_EMAIL_SES and try again.')
-  throw new Error('SEND_EMAIL_SES is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SEND_EMAIL_SES and try again.')
-}
 
 // Check if the "SEND_EMAIL_SES" flag is set to true before checking SES related variables.
-const SEND_EMAIL_SES = JSON.parse(process.env.SEND_EMAIL_SES || 'false')
 if (SEND_EMAIL_SES) {
   if (typeof process.env.SES_TO_ADDRESS === 'undefined' || process.env.SES_TO_ADDRESS === null) {
     logger.error('SES_TO_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_TO_ADDRESS and try again.')
@@ -127,10 +123,6 @@ if (SEND_EMAIL_SES) {
   if (typeof process.env.SES_FROM_ADDRESS === 'undefined' || process.env.SES_FROM_ADDRESS === null) {
     logger.error('SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.')
     throw new Error('SES_FROM_ADDRESS is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for SES_FROM_ADDRESS and try again.')
-  }
-  if (typeof process.env.UPDATE_FREQUENCY === 'undefined' || process.env.UPDATE_FREQUENCY === null) {
-    logger.error('UPDATE_FREQUENCY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for UPDATE_FREQUENCY and try again.')
-    throw new Error('UPDATE_FREQUENCY is undefined or null in .env file or it was not set at runtime (ex: running Docker container).  Please define value for UPDATE_FREQUENCY and try again.')
   }
 }
 
