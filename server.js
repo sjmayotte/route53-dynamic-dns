@@ -79,7 +79,6 @@ if (LOG_TO_STDOUT) {
 // Handle error loading required environment variables from .env file
 if (dotenvresult.error) {
   logger.info('Unable to load environment variables from .env file.  Process is likely running in a container.  Make sure you pass environment variables when starting container.')
-  logger.error(dotenvresult.error)
 } else {
   logger.info('Successfully loaded environment variables from .env file')
 }
