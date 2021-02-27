@@ -3,14 +3,16 @@ name: Docker Image CI
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    
+    tags:
+      - 'v*.*.*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   build:
+    name: Build & Test Code
 
     runs-on: ubuntu-latest
 
@@ -18,17 +20,26 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Use Node.js 12
+    - name: Use Node.js 14
       uses: actions/setup-node@v1
       with:
-        node-version: '12'
+        node-version: '14'
         
     - run: npm ci
       
     - run: npm run build --if-present
       
     - run: npm test
-            
+
+  docker:
+    name: Build Docker Container
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
       
