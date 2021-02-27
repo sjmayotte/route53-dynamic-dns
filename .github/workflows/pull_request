@@ -1,0 +1,29 @@
+name: Pull Request CI
+
+on:
+  # Triggers the workflow on pull request events
+  pull_request
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Test Code
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Use Node.js 14
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14'
+        
+    - run: npm ci
+      
+    - run: npm run build --if-present
+      
+    - run: npm test
