@@ -49,11 +49,11 @@ Environment variables are required to run the process as standalone Node.js proc
 * `SES_TO_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'To' address for email; ex: "admin@example.com"
 * `SES_FROM_ADDRESS` - `string` - If SEND_EMAIL_SES = true, 'From' address for email; ex: "notification@example.com"
 * `UPDATE_FREQUENCY` - `integer`, default: `60000 (1m)` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
-* `IPCHECKER` - `string` - Public IP checker service. 'opendns' or 'ifconfig.co'. Defaults to opendns.
+* `IPCHECKER` - `string`, default: `opendns` - Public IP checker service. 'opendns' or 'ifconfig.co'
 * `LOG_TO_STDOUT` - `boolean`, default: `false` - Flag to set log to STDOUT rather than to the application log file.
 
 # Minimum AWS IAM Policy
-Below are examples of minimium IAM policies for Route53 and SES.  Thanks for members of the community for posting in an issue!
+Below are examples of minimium IAM policies for Route53 and SES
 ## Route53
 ```json
 {
@@ -96,34 +96,73 @@ Image is built from official [`node:alpine`](https://hub.docker.com/_/node/) ima
 
 ### Versions
 #### `route53-dynamic-dns:latest`
-Automated build triggers with every `git push` to `master` branch.  This version is not guarenteed to be stable.  If you are looking for a stable version, please use `route53-dynamic-dns:v1.1`.
+Points to `latest` stable version.  Every attempt is made to keep releases backwards compatible.  Project follows [Semantic Versioning](https://semver.org/).  You can expect breaking changes may exist in MAJOR versions (1.X.X -> 2.X.X), but they should not exist in MINOR and PATCH versions.  Since project inception there has not been a release that is not backwards compatible.  The code base is stable.  There is no expectation of issues with backwards compatibility in future versions, but everyone should be aware of how versions are managed.  For most people looking to be hands off on upgrades, it should be safe to use `latest` version.  If your primary concern is stability, it is recommended that you use a specific version (see below).
 
-#### `route53-dynamic-dns:v1.1`
-Stable version built from `release/v1.1` branch.  The code is also available as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.1`.
+#### `route53-dynamic-dns:v1.2.0`
+Stable version built from tag `v1.2.0`.  The code is also available as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.2.0`.
+
+#### `route53-dynamic-dns:dev`
+Automated build triggers with every `git push` to `master` branch.  This version is not guarenteed to be stable.  If you are looking for a stable version, please use `route53-dynamic-dns:v1.2.0` or `route53-dynamic-dns:latest`.
 
 ### Pull Image
-Pull image from DockerHub.  Replace `[version]` with desired version (ex: `v1.1`).
+Pull image from DockerHub.  Replace `[version]` with desired version (ex: `v1.2`).
 ```bash
 $ docker pull sjmayotte/route53-dynamic-dns:[verison]
 ```
 
-### Run Container
-Run container with desired options.  See [Docker Run Reference](https://docs.docker.com/engine/reference/run/) for full list of options.
+### Run Container Examples
+See [Docker Run Reference](https://docs.docker.com/engine/reference/run/) for full list of options.
+#### Minimium ENV Variables
+Run container with default values (see: [Environment Variables](#environment-variables))
 ```bash
 $ docker run -d -t -i --rm \
     --name route53-dynamic-dns \
-    -e AWS_ACCESS_KEY_ID= \
-    -e AWS_SECRET_ACCESS_KEY= \
-    -e AWS_REGION= \
-    -e ROUTE53_HOSTED_ZONE_ID= \
-    -e ROUTE53_DOMAIN= \
-    -e ROUTE53_TYPE= \
-    -e ROUTE53_TTL= \
-    -e SEND_EMAIL_SES= \
-    -e SES_TO_ADDRESS= \
-    -e SES_FROM_ADDRESS= \
-    -e UPDATE_FREQUENCY= \
-    -e IPCHECKER= \
+    -e AWS_ACCESS_KEY_ID=[SECRET] \
+    -e AWS_SECRET_ACCESS_KEY=[SECRET] \
+    -e AWS_REGION=[REGION] \
+    -e ROUTE53_HOSTED_ZONE_ID=[value] \
+    -e ROUTE53_DOMAIN=[value] \
+    -e ROUTE53_TYPE=[value] \
+    -e ROUTE53_TTL=[value] \
+    sjmayotte/route53-dynamic-dns:[verison]
+```
+
+#### Enable SES Emails
+Run container with SES Emails  (see: [Environment Variables](#environment-variables))
+```bash
+$ docker run -d -t -i --rm \
+    --name route53-dynamic-dns \
+    -e AWS_ACCESS_KEY_ID=[SECRET] \
+    -e AWS_SECRET_ACCESS_KEY=[SECRET] \
+    -e AWS_REGION=[REGION] \
+    -e ROUTE53_HOSTED_ZONE_ID=[value] \
+    -e ROUTE53_DOMAIN=[value] \
+    -e ROUTE53_TYPE=[value] \
+    -e ROUTE53_TTL=[value] \
+    -e SEND_EMAIL_SES=True \
+    -e SES_TO_ADDRESS=[value] \
+    -e SES_FROM_ADDRESS=[value] \
+    sjmayotte/route53-dynamic-dns:[verison]
+```
+
+### Full Configuration
+Run container with all options (see: [Environment Variables](#environment-variables)).  `LOG_TO_STDOUT=True` is recommended setting in container.
+```bash
+$ docker run -d -t -i --rm \
+    --name route53-dynamic-dns \
+    -e AWS_ACCESS_KEY_ID=[SECRET] \
+    -e AWS_SECRET_ACCESS_KEY=[SECRET] \
+    -e AWS_REGION=[REGION] \
+    -e ROUTE53_HOSTED_ZONE_ID=[value] \
+    -e ROUTE53_DOMAIN=[value] \
+    -e ROUTE53_TYPE=[value] \
+    -e ROUTE53_TTL=[value] \
+    -e SEND_EMAIL_SES=[True or False] \
+    -e SES_TO_ADDRESS=[if SEND_EMAIL_SES = True then value else empty] \
+    -e SES_FROM_ADDRESS=[if SEND_EMAIL_SES = True then value else empty] \
+    -e UPDATE_FREQUENCY=60000 \
+    -e IPCHECKER=ifconfig.co \
+    -e LOG_TO_STDOUT=True \
     sjmayotte/route53-dynamic-dns:[verison]
 ```
 
@@ -147,6 +186,8 @@ $ docker exec -it [CONTAINER ID] sh
 /usr/src/app > ls -la
 /usr/src/app > tail -f application.log
 ```
+If running container with `LOG_TO_STDOUT=True` you will see logs in STDOUT.
+
 ## Podman
 [Podman](https://podman.io/) is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System.  There are no daemons in the background doing stuff, and this means that Podman can be integrated into system services through `systemd`.  Podman implements almost all the Docker CLI commands (apart from the ones related to Docker Swarm, of course).
 
@@ -221,7 +262,7 @@ $ systemctl reload r53-dydns-container.service
 Steps below assume you have Node.js and NPM installed on machine.  If you do not, please [download and install Node.js and NPM](https://nodejs.org/en/download/) before proceeding.
 
 ### Download Release
-Download release `version` from [release repository](https://github.com/sjmayotte/route53-dynamic-dns/releases).  For example, you can use `v1.1.tar.gz` to download source for release tag `v1.1`.
+Download release `version` from [release repository](https://github.com/sjmayotte/route53-dynamic-dns/releases).  For example, you can use `v1.2.0.tar.gz` to download source for release tag `v1.2.0`.
 ```bash
 $ curl -sL https://github.com/sjmayotte/route53-dynamic-dns/archive/[version] | tar xz
 $ cd route53-dynamic-dns
@@ -261,8 +302,10 @@ If running in Docker Container use the following command to access a shell:
    docker exec -it [container_id] sh
 ```
 
+If you set ENV variable `LOG_TO_STDOUT=True` then logs will send to STDOUT.
+
 ## `application.log`
-Application logs are written to `application.log` in root project directory.  Log files are compressed and archived after reaching 10MB in size.  The most recent 3 archives are kept in rotation.  All other archives are deleted to keep footprint small.
+Application logs are written to `application.log` in root project directory.  Log files are compressed and archived after reaching 10MB in size.  The most recent 3 archives are kept in rotation.  All other archives are deleted to keep footprint small.  This is ignored if `LOG_TO_STDOUT=True`.
 
 # Issues
 If you run into any issues, check to make sure all variables are set properly in `.env` or passed properly into Docker Container at runtime.  If you are sure your environment variables are correct, please open an [issue](https://github.com/sjmayotte/route53-dynamic-dns/issues) and provide as much detail as possible.
