@@ -40,6 +40,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    # Set tag to release version tag if one is present (in format v.1.0.0)
+    # otherwise consider this a dev build      
+    - name: Set Tag Output
+      id: vars
+      run: if [[ ${GITHUB_REF#refs/*/}  == v* ]]; then echo ::set-output name=tag::${GITHUB_REF#refs/*/}; else echo ::set-output name=tag::"dev"; fi
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
       
@@ -56,17 +62,17 @@ jobs:
       id: date
       run: echo "::set-output name=date::$(date --utc +'%Y-%m-%dT%H:%M:%SZ')"
         
-    - name: Build and push
+    - name: Build & Push
       uses: docker/build-push-action@v2
       with:
         context: .
         file: ./Dockerfile
         push: true
-        tags: sjmayotte/route53-dynamic-dns:latest
+        tags: sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
         build-args: |
             GIT_SHA=$GITHUB_SHA
             BUILD_DATE=${{ steps.date.outputs.date }}
-            DOCKER_TAG=1.1
-        
+            DOCKER_TAG=${{ steps.vars.outputs.tag }}
+
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
