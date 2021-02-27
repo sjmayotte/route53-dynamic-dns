@@ -20,7 +20,10 @@ Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current
       - [`route53-dynamic-dns:v1.2.0`](#route53-dynamic-dnsv120)
       - [`route53-dynamic-dns:dev`](#route53-dynamic-dnsdev)
     - [Pull Image](#pull-image)
-    - [Run Container](#run-container)
+    - [Run Container Examples](#run-container-examples)
+      - [Minimium ENV Variables](#minimium-env-variables)
+      - [Enable SES Emails](#enable-ses-emails)
+      - [Full Configuration](#full-configuration)
     - [View Useful Container Data](#view-useful-container-data)
   - [Podman](#podman)
     - [Running Container on RHEL8 or CentOS8](#running-container-on-rhel8-or-centos8)
@@ -146,7 +149,7 @@ $ docker run -d -t -i --rm \
     sjmayotte/route53-dynamic-dns:[verison]
 ```
 
-### Full Configuration
+#### Full Configuration
 Run container with all options (see: [Environment Variables](#environment-variables)).  `LOG_TO_STDOUT=True` is recommended setting in container.
 ```bash
 $ docker run -d -t -i --rm \
