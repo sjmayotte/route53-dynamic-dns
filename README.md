@@ -7,8 +7,6 @@
 Update [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with current public IP address (from [OpenDNS](https://diagnostic.opendns.com/myip) or [ifconfig](https://ifconfig.co/ip)).  No cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient with the ability to run as a [Node.js process](#nodejs-process) or in a [Docker Container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/).
 
 # Table of Contents
-- [sjmayotte/route53-dynamic-dns](#sjmayotteroute53-dynamic-dns)
-- [Table of Contents](#table-of-contents)
 - [Environment Variables](#environment-variables)
 - [Minimum AWS IAM Policy](#Minimum-AWS-IAM-Policy)
   - [Route53](#Route53)
