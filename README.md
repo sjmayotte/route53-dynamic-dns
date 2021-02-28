@@ -107,7 +107,7 @@ Stable version built from tag `v1.2.0`.  The code is also available as [GitHub R
 Automated build triggers with every `git push` to `master` branch.  This version is not guarenteed to be stable.  If you are looking for a stable version, please use `route53-dynamic-dns:v1.2.0` or `route53-dynamic-dns:latest`.
 
 ### Pull Image
-Pull image from DockerHub.  Replace `[version]` with desired version (ex: `v1.2`).
+Pull image from DockerHub.  Replace `[version]` with desired version (ex: `v1.2.0`).
 ```bash
 $ docker pull sjmayotte/route53-dynamic-dns:[verison]
 ```
