@@ -111,17 +111,6 @@ jobs:
             BUILD_DATE=${{ steps.date.outputs.date }}
             DOCKER_TAG=${{ steps.vars.outputs.tag }}
 
-    # Show image digexst
+    # Show image digest
     - name: Image Digest
       run: echo ${{ steps.docker_build.outputs.digest }}
-
-        # More details in https://github.com/snyk/actions#getting-your-snyk-token
-        # or you can signup for free at https://snyk.io/login
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: sjmayotte/route53-dynamic-dns
-        args: --file=Dockerfile
-    - name: Upload result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: snyk.sarif
