@@ -84,7 +84,7 @@ jobs:
     # git tag and also tag with latest
     - name: Build & Push Container
       uses: docker/build-push-action@v2
-      if: ${{ startsWith(${{ steps.vars.outputs.tag }}, 'v') }}
+      if: ${{ startsWith(steps.vars.outputs.tag, 'v') }}
       with:
         context: .
         file: ./Dockerfile
@@ -100,7 +100,7 @@ jobs:
     # Tag container for non release versions
     - name: Build & Push Container
       uses: docker/build-push-action@v2
-      if: ${{ startsWith(${{ steps.vars.outputs.tag }}, 'v') == false }}
+      if: ${{ startsWith(steps.vars.outputs.tag, 'v') == false }}
       with:
         context: .
         file: ./Dockerfile
