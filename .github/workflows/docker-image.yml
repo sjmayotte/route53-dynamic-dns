@@ -80,9 +80,27 @@ jobs:
       id: date
       run: echo "::set-output name=date::$(date --utc +'%Y-%m-%dT%H:%M:%SZ')"
     
-    # Build container with labels and tag
+    # If release tag in format (v1.0.0) tag container with
+    # git tag and also tag with latest
     - name: Build & Push Container
       uses: docker/build-push-action@v2
+      if: ${{ startsWith(${{ steps.vars.outputs.tag }}, 'v') }}
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: |
+          sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
+          sjmayotte/route53-dynamic-dns:latest
+        build-args: |
+            GIT_SHA=$GITHUB_SHA
+            BUILD_DATE=${{ steps.date.outputs.date }}
+            DOCKER_TAG=${{ steps.vars.outputs.tag }}
+
+    # Tag container for non release versions
+    - name: Build & Push Container
+      uses: docker/build-push-action@v2
+      if: ${{ startsWith(${{ steps.vars.outputs.tag }}, 'v') == false }}
       with:
         context: .
         file: ./Dockerfile
