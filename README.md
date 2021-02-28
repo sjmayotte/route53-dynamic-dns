@@ -215,7 +215,7 @@ Type=simple
 TimeoutStartSec=5m
 ExecStartPre=-/usr/bin/podman rm "r53-dydns"
 
-ExecStart=/usr/bin/podman run -it --name r53-dydns -e AWS_ACCESS_KEY_ID=[env] -e AWS_SECRET_ACCESS_KEY=[env] -e AWS_REGION=[env] -e ROUTE53_HOSTED_ZONE_ID=[env] -e ROUTE53_DOMAIN=[env] -e ROUTE53_TYPE=[env] -e ROUTE53_TTL=[env] -e SEND_EMAIL_SES=[env] -e SES_TO_ADDRESS=[env] -e SES_FROM_ADDRESS=[env] -e UPDATE_FREQUENCY=[env] -e IPCHECKER=[env] sjmayotte/route53-dynamic-dns:v1.1
+ExecStart=/usr/bin/podman run -it --name r53-dydns -e AWS_ACCESS_KEY_ID=[value] -e AWS_SECRET_ACCESS_KEY=[value] -e AWS_REGION=[value] -e ROUTE53_HOSTED_ZONE_ID=[value] -e ROUTE53_DOMAIN=[value] -e ROUTE53_TYPE=[value] -e ROUTE53_TTL=[value] -e SEND_EMAIL_SES=[value] -e SES_TO_ADDRESS=[value] -e SES_FROM_ADDRESS=[value] -e UPDATE_FREQUENCY=[value] -e IPCHECKER=[value] -e LOG_TO_STDOUT=[value] sjmayotte/route53-dynamic-dns:[tag]
 
 ExecReload=-/usr/bin/podman stop "r53-dydns"
 ExecReload=-/usr/bin/podman rm "r53-dydns"
@@ -261,7 +261,7 @@ $ systemctl reload r53-dydns-container.service
 ```
 
 ## Node.js Process
-Steps below assume you have Node.js and NPM installed on machine.  If you do not, please [download and install Node.js and NPM](https://nodejs.org/en/download/) before proceeding.
+Steps below assume you have Node.js and NPM installed on machine.  If you do not, please [download and install Node.js and NPM](https://nodejs.org/en/download/) before proceeding.  Process confirmed to work on Node v14.
 
 ### Download Release
 Download release `version` from [release repository](https://github.com/sjmayotte/route53-dynamic-dns/releases).  For example, you can use `v1.2.0.tar.gz` to download source for release tag `v1.2.0`.
@@ -278,6 +278,8 @@ $ vi .env
 $ # Update .env with values and save file
 $ rm .env.example
 ```
+
+See [Minimium ENV Variables]((minimium-env-variables) for example of minimium configuration.
 
 ### Installation
 Project uses [NPM](https://www.npmjs.com) package manager.  Install dependencies from `package.json`.
