@@ -7,7 +7,9 @@
 # fail PR checks for new vulnerabilities, see https://github.com/snyk/actions/
 
 name: Snyk Container
-on: push
+on:
+  push:
+  pull_request:
 jobs:
   snyk:
     runs-on: ubuntu-latest
