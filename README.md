@@ -48,12 +48,12 @@ Environment variables are required to run the process as standalone Node.js proc
 * `ROUTE53_DOMAIN` - `string` - AWS Route53 FQDN; ex: "home.example.com"
 * `ROUTE53_TYPE` - `string` - AWS Route 53 record type for FQDN; ex: "A"
 * `ROUTE53_TTL` - `integer` - AWS Route 53 TTL in seconds for FQDN; ex: 60
-* `SEND_EMAIL_SES` - `boolean`, default: `false` - Use AWS SES to send notification email. ex: true
+* `SEND_EMAIL_SES` - `boolean` (case sensative), default: `false` - Use AWS SES to send notification email. ex: true
 * `SES_TO_ADDRESS` - `string` - If SEND_EMAIL_SES = true then `required`, 'To' address for email; ex: "admin@example.com"
 * `SES_FROM_ADDRESS` - `string` - If SEND_EMAIL_SES = true then `required`, 'From' address for email; ex: "notification@example.com"
 * `UPDATE_FREQUENCY` - `integer`, default: `60000 (1m)` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
 * `IPCHECKER` - `string`, default: `opendns` - Public IP checker service. 'opendns' or 'ifconfig.co'
-* `LOG_TO_STDOUT` - `boolean`, default: `false` - Flag to set log to STDOUT rather than to the application log file.
+* `LOG_TO_STDOUT` - `boolean` (case sensative), default: `false` - Flag to set log to STDOUT rather than to the application log file.
 
 # Minimum AWS IAM Policy
 Below are examples of minimium IAM policies for Route53 and SES
