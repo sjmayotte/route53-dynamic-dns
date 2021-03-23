@@ -142,14 +142,14 @@ $ docker run -d -t -i --rm \
     -e ROUTE53_DOMAIN=[value] \
     -e ROUTE53_TYPE=[value] \
     -e ROUTE53_TTL=[value] \
-    -e SEND_EMAIL_SES=True \
+    -e SEND_EMAIL_SES=true \
     -e SES_TO_ADDRESS=[value] \
     -e SES_FROM_ADDRESS=[value] \
     sjmayotte/route53-dynamic-dns:[verison]
 ```
 
 #### Full Configuration
-Run container with all options (see: [Environment Variables](#environment-variables)).  `LOG_TO_STDOUT=True` is recommended setting in container.
+Run container with all options (see: [Environment Variables](#environment-variables)).  `LOG_TO_STDOUT=true` is recommended setting in container.
 ```bash
 $ docker run -d -t -i --rm \
     --name route53-dynamic-dns \
@@ -160,12 +160,12 @@ $ docker run -d -t -i --rm \
     -e ROUTE53_DOMAIN=[value] \
     -e ROUTE53_TYPE=[value] \
     -e ROUTE53_TTL=[value] \
-    -e SEND_EMAIL_SES=[True or False] \
-    -e SES_TO_ADDRESS=[if SEND_EMAIL_SES = True then value else empty] \
-    -e SES_FROM_ADDRESS=[if SEND_EMAIL_SES = True then value else empty] \
+    -e SEND_EMAIL_SES=[true or false] \
+    -e SES_TO_ADDRESS=[if SEND_EMAIL_SES = true then value else empty] \
+    -e SES_FROM_ADDRESS=[if SEND_EMAIL_SES = true then value else empty] \
     -e UPDATE_FREQUENCY=60000 \
     -e IPCHECKER=ifconfig.co \
-    -e LOG_TO_STDOUT=True \
+    -e LOG_TO_STDOUT=true \
     sjmayotte/route53-dynamic-dns:[verison]
 ```
 
@@ -189,7 +189,7 @@ $ docker exec -it [CONTAINER ID] sh
 /usr/src/app > ls -la
 /usr/src/app > tail -f application.log
 ```
-If running container with `LOG_TO_STDOUT=True` you will see logs in STDOUT.
+If running container with `LOG_TO_STDOUT=true` you will see logs in STDOUT.
 
 ## Podman
 [Podman](https://podman.io/) is a daemonless container engine for developing, managing, and running OCI Containers on your Linux System.  There are no daemons in the background doing stuff, and this means that Podman can be integrated into system services through `systemd`.  Podman implements almost all the Docker CLI commands (apart from the ones related to Docker Swarm, of course).
@@ -307,10 +307,10 @@ If running in Docker Container use the following command to access a shell:
    docker exec -it [container_id] sh
 ```
 
-If you set ENV variable `LOG_TO_STDOUT=True` then logs will send to STDOUT.
+If you set ENV variable `LOG_TO_STDOUT=true` then logs will send to STDOUT.
 
 ## `application.log`
-Application logs are written to `application.log` in root project directory.  Log files are compressed and archived after reaching 10MB in size.  The most recent 3 archives are kept in rotation.  All other archives are deleted to keep footprint small.  This is ignored if `LOG_TO_STDOUT=True`.
+Application logs are written to `application.log` in root project directory.  Log files are compressed and archived after reaching 10MB in size.  The most recent 3 archives are kept in rotation.  All other archives are deleted to keep footprint small.  This is ignored if `LOG_TO_STDOUT=true`.
 
 # Issues
 If you run into any issues, check to make sure all variables are set properly in `.env` or passed properly into Docker Container at runtime.  If you are sure your environment variables are correct, please open an [issue](https://github.com/sjmayotte/route53-dynamic-dns/issues) and provide as much detail as possible.
