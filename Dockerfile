@@ -30,5 +30,9 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
+# Change file-owner to non-root user.
+RUN chmod -R node:node /usr/src/app
+USER node
+
 # Run server.js every 30 seconds
 CMD ["npm", "start"]
