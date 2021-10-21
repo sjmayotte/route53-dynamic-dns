@@ -31,6 +31,7 @@ RUN npm install
 COPY . /usr/src/app
 
 # Change file-owner to non-root user.
+RUN chown -R node:node /usr/src/app
 RUN chmod -R 755 /usr/src/app
 USER node
 
