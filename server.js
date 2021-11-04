@@ -2,6 +2,7 @@
 
 // Dependencies
 const https = require('https')
+const http = require('http')
 const fs = require('fs')
 const AWS = require('aws-sdk')
 const log4js = require('log4js')
@@ -23,6 +24,7 @@ const SES_TO_ADDRESS = process.env.SES_TO_ADDRESS
 const SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS
 const UPDATE_FREQUENCY = parseInt(process.env.UPDATE_FREQUENCY || '60000')
 const IPCHECKER = process.env.IPCHECKER || 'ifconfig.co'
+const IPCHECKER_CUSTOM_URL = process.env.IPCHECKER_CUSTOM_URL || ''
 const LOG_TO_STDOUT = JSON.parse(process.env.LOG_TO_STDOUT || 'false')
 
 // Setup connection info for IPCHECKER services. Other services can
@@ -42,7 +44,11 @@ const ipChecker = {
   'ipify.org': {
     fullname: 'ipify.org',
     url: 'https://api.ipify.org'
-  }
+  },
+  'custom': {
+    fullname: 'custom',
+    url: IPCHECKER_CUSTOM_URL
+  },
 }
 
 // Initialize logging
@@ -191,9 +197,24 @@ const DeterminePublicIP = function () {
     logger.info('OpenDNS option temporarily pointing to ipify.org because of cert issue; see: https://github.com/sjmayotte/route53-dynamic-dns/issues/18')
   }
 
-  logger.info('HTTPS GET ' + ipChecker[IPCHECKER].url)
+  // Select checker URL to use
+  var checkerURL = ipChecker[IPCHECKER].url
+
+  // Select client to use, warning if HTTP used as man-in-the-middle attacks
+  // are possible. Consider using HTTP only if absolutely necessary on private,
+  // trusted networks
+  var protocol
+  if (checkerURL.startsWith("https")) {
+    logger.info('HTTPS GET ' + checkerURL)
+    protocol = https
+  } else {
+    logger.info('HTTP GET ' + checkerURL)
+    logger.warn('Potential security vulnerability, use HTTPS if possible')
+    protocol = http
+  }
+
   // Get public IP
-  https.get(ipChecker[IPCHECKER].url, (res) => {
+  protocol.get(checkerURL, (res) => {
     logger.info('Status Code:', res.statusCode, res.statusMessage)
     res.on('data', (data) => {
       if (res.statusCode === 200) {
