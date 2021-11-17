@@ -22,19 +22,26 @@ const SEND_EMAIL_SES = JSON.parse(process.env.SEND_EMAIL_SES || 'false')
 const SES_TO_ADDRESS = process.env.SES_TO_ADDRESS
 const SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS
 const UPDATE_FREQUENCY = parseInt(process.env.UPDATE_FREQUENCY || '60000')
-const IPCHECKER = process.env.IPCHECKER || 'opendns'
+const IPCHECKER = process.env.IPCHECKER || 'ifconfig.co'
 const LOG_TO_STDOUT = JSON.parse(process.env.LOG_TO_STDOUT || 'false')
 
 // Setup connection info for IPCHECKER services. Other services can
 // be added below in future if desired
+// Temporarily pointing opendns to ipify.org url for backwards compatability.
+// This will be updated back to https://diagnostic.opendns.com/myip when server
+// configuration is fixed
 const ipChecker = {
   opendns: {
-    fullname: 'OpenDNS',
-    url: 'https://diagnostic.opendns.com/myip'
+    fullname: 'OpenDNS-TEMP-POINTING-TO-ipify.org',
+    url: 'https://api.ipify.org'
   },
   'ifconfig.co': {
     fullname: 'ifconfig.co',
     url: 'https://ifconfig.co/ip'
+  },
+  'ipify.org': {
+    fullname: 'ipify.org',
+    url: 'https://api.ipify.org'
   }
 }
 

@@ -52,7 +52,7 @@ Environment variables are required to run the process as standalone Node.js proc
 * `SES_TO_ADDRESS` - `string` - If SEND_EMAIL_SES = true then `required`, 'To' address for email; ex: "admin@example.com"
 * `SES_FROM_ADDRESS` - `string` - If SEND_EMAIL_SES = true then `required`, 'From' address for email; ex: "notification@example.com"
 * `UPDATE_FREQUENCY` - `integer`, default: `60000 (1m)` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
-* `IPCHECKER` - `string`, default: `opendns` - Public IP checker service. 'opendns' or 'ifconfig.co'
+* `IPCHECKER` - `string`, default: `ifconfig.co` - Public IP checker service. 'ifconfig.co' or 'ipify.org'.  As of November 2021, 'opendns' option is not working because the server's certificate chain is incomplete.  The latest release temporarily points 'opendns' option to 'ipify.org'.  This change will be removed after server config is fixed.  More info in [this issue](https://github.com/sjmayotte/route53-dynamic-dns/issues/18#issuecomment-971780716)
 * `LOG_TO_STDOUT` - `boolean` (case sensative), default: `false` - Flag to set log to STDOUT rather than to the application log file.
 
 # Minimum AWS IAM Policy
