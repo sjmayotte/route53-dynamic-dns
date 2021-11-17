@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-The following versions are currently being supported with security updates.  Support for older versions may be added in the future.  Everyone is encourages to use the latest version.
+The following versions are currently being supported with security updates.  Support for older versions may be added in the future.  Everyone is encouraged to use the latest version.
 
 | Version | Supported          |
 | ------- | ------------------ |
