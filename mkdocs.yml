@@ -1,7 +1,7 @@
 site_name: route53-dynamic-dns
 site_description: Update AWS Route53 hosted zone with current public IP address. Alternative to Dynamic DNS services such as Dyn, No-IP, etc
 site_author: sjmayotte
-site_url: https://sjmayotte.github.com/route53-dynamic-dns
+site_url: https://sjmayotte.dev/route53-dynamic-dns/
 edit_uri: edit/master/docs/
 docs_dir: docs
 

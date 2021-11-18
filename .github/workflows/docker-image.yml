@@ -116,3 +116,25 @@ jobs:
     # Show image digest
     - name: Image Digest
       run: echo ${{ steps.docker_build.outputs.digest }}
+
+  publish-docs:
+    name: Create & Publish Docs
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Set version of node to use
+      - name: Use Node.js 16
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      
+      # Install package
+      - run: pip install mkdocs-material
+
+      # Deploy docs to gh-pages branch
+      - run: mkdocs gh-deploy --force
