@@ -121,7 +121,7 @@ jobs:
     name: Create & Publish Docs
 
     # Run only if build & docker completes successfully
-    needs: docker
+    #needs: docker
 
     runs-on: ubuntu-latest
 
@@ -130,10 +130,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Set version of node to use
+      # Build docs using mkdocs material theme
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        # Or use mhausenblas/mkdocs-deploy-gh-pages@nomaterial to build without the mkdocs-material theme
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CUSTOM_DOMAIN: https://sjmayotte.dev/
