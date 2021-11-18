@@ -135,6 +135,6 @@ jobs:
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CUSTOM_DOMAIN: sjmayotte.dev
+          #CUSTOM_DOMAIN: sjmayotte.dev
           #EXTRA_PACKAGES: build-base
           #REQUIREMENTS: folder/requirements.txt
