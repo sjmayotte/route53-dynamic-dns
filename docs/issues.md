@@ -8,4 +8,4 @@ Please do a search in open issues to see if the issue or feature request has alr
 If you find your issue already exists, make relevant comments and add your reaction.
 
 ##Submitting an Issue
-Read [FAQ](/faq/) and check to make sure all variables are set properly in `.env` or passed properly into the Docker Container at runtime.  If you are sure your environment variables are correct, please open an [issue](https://github.com/sjmayotte/route53-dynamic-dns/issues) and provide as much detail as possible.
+Read [FAQ](/route53-dynamic-dns/faq/) and check to make sure all variables are set properly in `.env` or passed properly into the Docker Container at runtime.  If you are sure your environment variables are correct, please open an [issue](https://github.com/sjmayotte/route53-dynamic-dns/issues) and provide as much detail as possible.

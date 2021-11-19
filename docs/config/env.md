@@ -37,7 +37,7 @@ Run with default values
 
 
 ### Enable SES Emails
-Run with SES Emails.  Make sure IAM policy exists to use SES services.  See [AWS Services](/config/aws/#ses)
+Run with SES Emails.  Make sure IAM policy exists to use SES services.  See [AWS Services](/route53-dynamic-dns/config/aws/#ses)
 
     AWS_ACCESS_KEY_ID=[SECRET]
     AWS_SECRET_ACCESS_KEY=[SECRET]

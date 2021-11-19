@@ -9,7 +9,7 @@ $ cd route53-dynamic-dns
 ```
 
 ## Set Environment Variables
-You have the option to pass [environment variables](/config/env/) at runtime or populate environment variables in `.env`.  Release package includes `.env.example`, which can be renamed to `.env` and populated with values.  The process expects `.env` will be in root of directory structure.
+You have the option to pass [environment variables](/route53-dynamic-dns/config/env/) at runtime or populate environment variables in `.env`.  Release package includes `.env.example`, which can be renamed to `.env` and populated with values.  The process expects `.env` will be in root of directory structure.
 ```bash
 $ cp .env.example .env
 $ vi .env
@@ -17,7 +17,7 @@ $ # Update .env with values and save file
 $ rm .env.example
 ```
 
-See [Minimium ENV Variables](/config/env/#minimium-env-variables) for example of minimium configuration.
+See [Minimium ENV Variables](/route53-dynamic-dns/config/env/#minimium-env-variables) for example of minimium configuration.
 
 ## Installation
 Project uses [NPM](https://www.npmjs.com) package manager.  Install dependencies from `package.json`.

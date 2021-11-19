@@ -5,4 +5,4 @@ Start Node.js process which will run forever (or until process is stopped by use
 ```bash
 $ npm start
 ```
-The Node.js process writes useful data to log files.  See [Logs](/usage/logs/) section for more information.
+The Node.js process writes useful data to log files.  See [Logs](/route53-dynamic-dns/config/logs/) section for more information.

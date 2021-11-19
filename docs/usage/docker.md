@@ -3,7 +3,7 @@
 See [Docker Run Reference](https://docs.docker.com/engine/reference/run/) for full list of options.
 
 ### Minimium ENV Variables
-Run container with default values (see: [Environment Variables](/config/env/))
+Run container with default values (see: [Environment Variables](/route53-dynamic-dns/config/env/))
 ```bash
 $ docker run -d -t -i --rm \
     --name route53-dynamic-dns \
@@ -18,7 +18,7 @@ $ docker run -d -t -i --rm \
 ```
 
 ### Enable SES Emails
-Run container with SES Emails  (see: [Environment Variables](/config/env/))
+Run container with SES Emails  (see: [Environment Variables](/route53-dynamic-dns/config/env/))
 ```bash
 $ docker run -d -t -i --rm \
     --name route53-dynamic-dns \
@@ -36,7 +36,7 @@ $ docker run -d -t -i --rm \
 ```
 
 ### Full Configuration
-Run container with all options (see: [Environment Variables](/config/env/)).  `LOG_TO_STDOUT=true` is recommended setting in container.
+Run container with all options (see: [Environment Variables](/route53-dynamic-dns/config/env/)).  `LOG_TO_STDOUT=true` is recommended setting in container.
 ```bash
 $ docker run -d -t -i --rm \
     --name route53-dynamic-dns \
@@ -70,7 +70,7 @@ View logs of `STDOUT` from `CONTAINER ID` (copy from output above)
 ```bash
 $ docker logs [CONTAINER ID]
 ```
-View Node.js process log, which is written to `application.log` in project root directory.  See: [Logs](/usage/logs/) for more details.
+View Node.js process log, which is written to `application.log` in project root directory.  See: [Logs](/route53-dynamic-dns/config/logs/) for more details.
 ```bash
 $ docker exec -it [CONTAINER ID] sh
 /usr/src/app > ls -la
