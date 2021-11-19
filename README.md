@@ -6,7 +6,7 @@
 ![GitHub](https://img.shields.io/github/license/sjmayotte/route53-dynamic-dns)
 
 ## What is route53-dynamic-dns?
-A lightweight cli application written in [Node](https://nodejs.org/en/) that will update an [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with your current public IP address on a scheduled interval.  This project is a no cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient and delivered via a [docker container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/) or [node.js process](https://github.com/sjmayotte/route53-dynamic-dns/releases/latest).
+A lightweight cli application written in [Node](https://nodejs.org/en/) that will update an [Amazon Route53](http://aws.amazon.com/route53/) hosted zone with your current public IP address on a scheduled interval.  This project is a no cost alternative to DynamicDNS services such as Dyn, No-IP, etc.  Designed to be simple and efficient and run via a [docker container](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/) or [node.js process](https://github.com/sjmayotte/route53-dynamic-dns/releases/latest).
 
 ## Documentation
 [Link to online docs](https://sjmayotte.dev/route53-dynamic-dns/)
