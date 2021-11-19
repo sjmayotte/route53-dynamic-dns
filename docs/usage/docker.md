@@ -70,7 +70,7 @@ View logs of `STDOUT` from `CONTAINER ID` (copy from output above)
 ```bash
 $ docker logs [CONTAINER ID]
 ```
-View Node.js process log, which is written to `application.log` in project root directory.  See: [Logs](/route53-dynamic-dns/config/logs/) for more details.
+View Node.js process log, which is written to `application.log` in project root directory.  See: [Logs](/route53-dynamic-dns/usage/logs/) for more details.
 ```bash
 $ docker exec -it [CONTAINER ID] sh
 /usr/src/app > ls -la
