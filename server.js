@@ -32,7 +32,7 @@ const LOG_TO_STDOUT = JSON.parse(process.env.LOG_TO_STDOUT || 'false')
 // configuration is fixed
 const ipChecker = {
   opendns: {
-    fullname: 'OpenDNS-TEMP-POINTING-TO-ipify.org',
+    fullname: 'ipify.org',
     url: 'https://api.ipify.org'
   },
   'ifconfig.co': {
@@ -186,6 +186,11 @@ const DeterminePublicIP = function () {
   currentIP = ''
   previousIP = ''
 
+  // Remove when OpenDNS cert issue is fixed
+  if (IPCHECKER === 'opendns') {
+    logger.info('OpenDNS option temporarily pointing to ipify.org because of cert issue; see: https://github.com/sjmayotte/route53-dynamic-dns/issues/18')
+  }
+
   logger.info('HTTPS GET ' + ipChecker[IPCHECKER].url)
   // Get public IP
   https.get(ipChecker[IPCHECKER].url, (res) => {
@@ -219,7 +224,7 @@ const FindLastKnownIPLocally = function () {
         RecordType: ROUTE53_TYPE
       }
 
-      logger.info('Initiating request to AWS Route53 (Method: testDNSAnswer) to get IP for', ROUTE53_DOMAIN, '(A Record)')
+      logger.info('Initiating request to AWS Route53 (Method: testDNSAnswer) to get IP for', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'Record )')
 
       route53.testDNSAnswer(params, function (err, data) {
         if (err) {
@@ -228,7 +233,7 @@ const FindLastKnownIPLocally = function () {
         } else {
           previousIP += data.RecordData
           // In this case only set currentIP = previousIP
-          logger.info('AWS Route53 responded that', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'Record) is pointing to', previousIP)
+          logger.info('AWS Route53 responded that', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'Record ) is pointing to', previousIP)
           // Update LastKnownIPFileName with current IP
           WriteCurrentIPInLastKnownIPFileName(previousIP)
         }
