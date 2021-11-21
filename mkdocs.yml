@@ -26,6 +26,7 @@ extra:
     #bing: 
 
 theme:
+  name: material
   language: en
   palette:
     - media: "(prefers-color-scheme: light)"
