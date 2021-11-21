@@ -8,12 +8,36 @@ docs_dir: docs
 repo_name: sjmayotte/route53-dynamic-dns
 repo_url: https://github.com/sjmayotte/route53-dynamic-dns
 
-#extra:
+extra:
+  social:
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/
+    - icon: fontawesome/brands/github
+      link: https://github.com/sjmayotte
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/stevemayotte
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/SteveMayotte
+  analytics:
+    provider: google
+    property: G-RPGNP3RWVE
   #seo:
     #google: 
     #bing: 
-    #alexa:
-    #yandex:
+
+theme:
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
 
 nav:
   - Home: index.md
