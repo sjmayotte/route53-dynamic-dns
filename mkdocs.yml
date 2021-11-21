@@ -46,6 +46,12 @@ theme:
   icon:
     repo: fontawesome/brands/github
 
+plugins:
+  - search
+  - git-revision-date-localized:
+      type: iso_datetime
+      enable_creation_date: true
+
 nav:
   - Home: index.md
   - Installation:

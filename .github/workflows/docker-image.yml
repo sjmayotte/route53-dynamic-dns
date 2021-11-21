@@ -129,12 +129,14 @@ jobs:
       # Checkout code
       - name: Checkout
         uses: actions/checkout@v2
+        # Number of commits to fetch. 0 indicates all history for all branches and tags.
+        # Required for https://timvink.github.io/mkdocs-git-revision-date-localized-plugin/index.html
+        with:
+          fetch-depth: 0
 
       # Build docs using mkdocs material theme
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #CUSTOM_DOMAIN: sjmayotte.dev
-          #EXTRA_PACKAGES: build-base
-          #REQUIREMENTS: folder/requirements.txt
+          REQUIREMENTS: mkdocs/requirements.txt
