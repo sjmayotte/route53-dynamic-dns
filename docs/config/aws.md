@@ -9,13 +9,13 @@ Below are examples of minimium IAM policies for Route53 and SES
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "VisualEditor0",
+            "Sid": "route53policy1",
             "Effect": "Allow",
             "Action": "route53:ChangeResourceRecordSets",
             "Resource": "arn:aws:route53:::hostedzone/*"
         },
         {
-            "Sid": "VisualEditor1",
+            "Sid": "route53policy2",
             "Effect": "Allow",
             "Action": "route53:TestDNSAnswer",
             "Resource": "*"
