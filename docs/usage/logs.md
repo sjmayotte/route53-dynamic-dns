@@ -15,3 +15,6 @@ If you set ENV variable `LOG_TO_STDOUT=true` then logs will send to STDOUT.
 
 ## `application.log`
 Application logs are written to `application.log` in root project directory.  Log files are compressed and archived after reaching 10MB in size.  The most recent 3 archives are kept in rotation.  All other archives are deleted to keep footprint small.  This is ignored if `LOG_TO_STDOUT=true`.
+
+## `Last-Known-IP.log`
+The current known IP address is written to `Last-Known-IP.log` in the OS temporary directory. This file is used to reduce the number of lookups to Route53.

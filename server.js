@@ -3,6 +3,8 @@
 // Dependencies
 const https = require('https')
 const fs = require('fs')
+const os = require('os')
+const path = require('path')
 const AWS = require('aws-sdk')
 const log4js = require('log4js')
 const dotenv = require('dotenv')
@@ -133,7 +135,7 @@ if (SEND_EMAIL_SES) {
 }
 
 // Local variables for the process
-const LastKnownIPFileName = 'Last-Known-IP.log'
+const LastKnownIPFileName = path.join(os.tmpdir(), 'Last-Known-IP.log')
 let currentIP = ''
 let previousIP = ''
 let SentErrorEmail = false
@@ -413,6 +415,7 @@ const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMe
 const RunScript = function () {
   if (FirstRun) {
     logger.info('First run of process.')
+    logger.info('Using', LastKnownIPFileName, 'to store last known IP address')
     RemoveFileNameIfItExists(LastKnownIPFileName)
     FirstRun = false
   } else {
