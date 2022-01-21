@@ -11,7 +11,7 @@
     "aws-sdk": "^2.1030.0",
     "dotenv": "^10.0.0",
     "forever-monitor": "^3.0.3",
-    "log4js": "^6.3.0"
+    "log4js": "^6.4.0"
   },
   "engines": {
     "node": "^16.8"
