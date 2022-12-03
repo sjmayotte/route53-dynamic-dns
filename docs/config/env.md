@@ -12,12 +12,13 @@ Environment variables are required to run the process.
     ROUTE53_DOMAIN          string      AWS Route53 FQDN; ex: "home.example.com"
     ROUTE53_TYPE            string      AWS Route 53 record type for FQDN; ex: "A"
     ROUTE53_TTL             integer     AWS Route 53 TTL in seconds for FQDN; ex: 60
-    SEND_EMAIL_SES          boolean     Case sensative, default: `false` - use AWS SES to send notification email. ex: true
+    SEND_EMAIL_SES          boolean     Case sensitive, default: `false` - use AWS SES to send notification email. ex: true
     SES_TO_ADDRESS          string      If SEND_EMAIL_SES = true then required, 'To' address for email; ex: "admin@example.com"
     SES_FROM_ADDRESS        string      If SEND_EMAIL_SES = true then `required`, 'To' address for email; ex: "admin@example.com"
     UPDATE_FREQUENCY        integer     default: `60000 (1m)` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
-    IPCHECKER               string      default: `ifconfig.co` - Public IP checker service. 'ifconfig.co' or 'ipify.org'.  See note below for 'opendns'
-    LOG_TO_STDOUT           boolean     Case sensative, default: `false` - Flag to set log to STDOUT rather than to the application log file.
+    IPCHECKER               string      default: `ifconfig.co` - Public IP checker service. 'ifconfig.co', 'ipify.org' or 'custom' (see IPCHECKER_CUSTOM_URL below). See note below for 'opendns'
+    IPCHECKER_CUSTOM_URL    string      If IPCHECKER = custom then `required`. URL to perform HTTP get request to in order to obtain external IP. Server is expected to return the IP as plain text and nothing else.
+    LOG_TO_STDOUT           boolean     Case sensitive, default: `false` - Flag to set log to STDOUT rather than to the application log file.
 
 For help setting up IAM user access see [AWS Javascript SDK - Getting Started](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html).
 
