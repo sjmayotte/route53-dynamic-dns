@@ -421,4 +421,14 @@ const RunScript = function () {
 }
 
 // Execute function RunScript at interval set in UPDATE_FREQUENCY (ex: 60000, which equals 60 seconds or 1 minute)
-setInterval(RunScript, UPDATE_FREQUENCY)
+const intervalId = setInterval(RunScript, UPDATE_FREQUENCY)
+
+// Shutdown by clearing recurring call to RunScript and return when complete
+const shutdown = () => {
+  logger.info('Stopping server.js process with id ' + intervalId + '...')
+  clearInterval(intervalId)
+}
+
+// Gracefully shutdown process by trapping SIGINT and SIGTERM signals
+process.on('SIGINT', shutdown)
+process.on('SIGTERM', shutdown)

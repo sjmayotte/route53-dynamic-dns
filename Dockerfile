@@ -1,5 +1,5 @@
 # Use offical Node.js image.  The image uses Apline Linux
-FROM node:16.13-alpine
+FROM node:19.6.0-alpine3.17
 
 # Build-time metadata as defined at https://github.com/opencontainers/image-spec/blob/master/annotations.md
 ARG BUILD_DATE
@@ -35,5 +35,5 @@ RUN chown -R node:node /usr/src/app
 RUN chmod -R 755 /usr/src/app
 USER node
 
-# Run server.js every 30 seconds
-CMD ["npm", "start"]
+# Run server.js
+CMD [ "node", "server.js" ]

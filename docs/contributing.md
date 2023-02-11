@@ -9,7 +9,7 @@ I'm excited that you want to contribute!  Your ongoing support will continue to 
 * Test your code
 * Push to your fork and submit a pull request
 
-##Best practices
+## Best practices
 * Keep your changes as focused as possible
 * Update `README.MD` and any other docs
 * Write a good message
