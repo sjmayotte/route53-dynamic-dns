@@ -18,6 +18,7 @@ Environment variables are required to run the process.
     UPDATE_FREQUENCY        integer     default: `60000 (1m)` - Interval in Milliseconds to check if Public IP has changed; ex: 60000 (which is every minute)
     IPCHECKER               string      default: `ifconfig.co` - Public IP checker service. 'ifconfig.co' or 'ipify.org'.  See note below for 'opendns'
     LOG_TO_STDOUT           boolean     Case sensative, default: `false` - Flag to set log to STDOUT rather than to the application log file.
+    TZ                      string      Timezone for docker container and logs.  See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones),  ex: "America/New_York"
 
 For help setting up IAM user access see [AWS Javascript SDK - Getting Started](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html).
 
@@ -67,3 +68,4 @@ Run with all options (`LOG_TO_STDOUT=true` is recommended setting in container)
     UPDATE_FREQUENCY=60000
     IPCHECKER=ifconfig.co
     LOG_TO_STDOUT=false
+    TZ=America/New_York

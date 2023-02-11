@@ -19,6 +19,9 @@ LABEL org.opencontainers.image.created=$BUILD_DATE \
   org.opencontainers.image.title="route53-dynamic-dns" \
   org.opencontainers.image.description="Update AWS Route53 hosted zone with current public IP address. Alternative to Dynamic DNS services such as Dyn, No-IP, etc"
 
+# Install timezone database to allow setting timezone through TZ environment variable
+RUN apk add --no-cache tzdata
+
 # Create app directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

@@ -53,6 +53,7 @@ $ docker run -d -t -i --rm \
     -e UPDATE_FREQUENCY=60000 \
     -e IPCHECKER=ifconfig.co \
     -e LOG_TO_STDOUT=true \
+    -e TZ=America/New_York \
     sjmayotte/route53-dynamic-dns:[verison]
 ```
 
