@@ -16,4 +16,4 @@ I'm excited that you want to contribute!  Your ongoing support will continue to 
 * Keep your changes as focused as possible
 * Update `README.MD` and any other docs
 * Write a good message
-* Run code style checks by running `npm run lint`
+* Run code style checks by running `npm run test`
