@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "standard"
+    "test": "standard && markdownlint-cli2 '*.md' '**/*.md' '#node_modules'"
   },
   "dependencies": {
     "aws-sdk": "^2.1313.0",
@@ -19,6 +19,7 @@
   "private": true,
   "license": "MIT",
   "devDependencies": {
+    "markdownlint-cli2": "^0.6.0",
     "standard": "^17.0.0"
   }
 }

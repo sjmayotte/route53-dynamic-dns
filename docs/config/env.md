@@ -2,6 +2,8 @@
 
 Environment variables are required to run the process.
 
+<!-- markdownlint-disable line-length -->
+
     -----------------------------------------------------------------------
     VARIABLE                TYPE        COMMENTS
     -----------------------------------------------------------------------
@@ -20,12 +22,17 @@ Environment variables are required to run the process.
     LOG_TO_STDOUT           boolean     Case sensative, default: `false` - Flag to set log to STDOUT rather than to the application log file.
     TZ                      string      Timezone for docker container and logs.  See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones),  ex: "America/New_York"
 
-For help setting up IAM user access see [AWS Javascript SDK - Getting Started](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html).
+<!-- markdownlint-enable line-length -->
 
-As of November 2021, 'opendns' option is not working because the server's certificate chain is incomplete.  The latest release temporarily points 'opendns' option to 'ipify.org'.  This change will be removed after server config is fixed.  More info in [this issue](https://github.com/sjmayotte/route53-dynamic-dns/issues/18#issuecomment-971780716).
+For help setting up IAM user access
+see [AWS Javascript SDK - Getting Started](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html).
 
+As of November 2021, 'opendns' option is not working because the server's certificate chain is incomplete. The latest
+release temporarily points 'opendns' option to 'ipify.org'. This change will be removed after server config is fixed.
+More info in [this issue](https://github.com/sjmayotte/route53-dynamic-dns/issues/18#issuecomment-971780716).
 
-### Minimium ENV Variables
+## Minimum ENV Variables
+
 Run with default values
 
     AWS_ACCESS_KEY_ID=[SECRET]
@@ -36,9 +43,10 @@ Run with default values
     ROUTE53_TYPE=[value]
     ROUTE53_TTL=[value]
 
+## Enable SES Emails
 
-### Enable SES Emails
-Run with SES Emails.  Make sure IAM policy exists to use SES services.  See [AWS Services](/route53-dynamic-dns/config/aws/#ses)
+Run with SES Emails. Make sure IAM policy exists to use SES services.
+See [AWS Services](/route53-dynamic-dns/config/aws/#ses)
 
     AWS_ACCESS_KEY_ID=[SECRET]
     AWS_SECRET_ACCESS_KEY=[SECRET]
@@ -51,8 +59,8 @@ Run with SES Emails.  Make sure IAM policy exists to use SES services.  See [AWS
     SES_TO_ADDRESS=[value]
     SES_FROM_ADDRESS=[value]
 
+## Full Configuration
 
-### Full Configuration
 Run with all options (`LOG_TO_STDOUT=true` is recommended setting in container)
 
     AWS_ACCESS_KEY_ID=[SECRET]
