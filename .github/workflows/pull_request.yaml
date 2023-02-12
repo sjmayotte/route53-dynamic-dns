@@ -15,14 +15,14 @@ jobs:
 
     steps:
     # Checkout code
-    - name: Checkout
-      uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
     # Set version of node to use
     - name: Use Node.js 19
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
-        node-version: '19'
+        node-version: 19
 
     # This command is similar to npm install, except it's meant to be used in
     # automated environments such as test platforms, continuous integration,
