@@ -9,7 +9,7 @@ See [Docker Run Reference](https://docs.docker.com/engine/reference/run/) for fu
 Run container with default values (see: [Environment Variables](/route53-dynamic-dns/config/env/))
 
 ```bash
-$ docker run -d -t -i --rm \
+docker run -d -t -i --rm \
     --name route53-dynamic-dns \
     -e AWS_ACCESS_KEY_ID=[SECRET] \
     -e AWS_SECRET_ACCESS_KEY=[SECRET] \
@@ -26,7 +26,7 @@ $ docker run -d -t -i --rm \
 Run container with SES Emails  (see: [Environment Variables](/route53-dynamic-dns/config/env/))
 
 ```bash
-$ docker run -d -t -i --rm \
+docker run -d -t -i --rm \
     --name route53-dynamic-dns \
     -e AWS_ACCESS_KEY_ID=[SECRET] \
     -e AWS_SECRET_ACCESS_KEY=[SECRET] \
@@ -47,7 +47,7 @@ Run container with all options (see: [Environment Variables](/route53-dynamic-dn
 is recommended setting in container.
 
 ```bash
-$ docker run -d -t -i --rm \
+docker run -d -t -i --rm \
     --name route53-dynamic-dns \
     -e AWS_ACCESS_KEY_ID=[SECRET] \
     -e AWS_SECRET_ACCESS_KEY=[SECRET] \
@@ -91,7 +91,9 @@ View Node.js process log, which is written to `application.log` in project root 
 See: [Logs](/route53-dynamic-dns/usage/logs/) for more details.
 
 ```bash
-$ docker exec -it [CONTAINER ID] sh
+docker exec -it [CONTAINER ID] sh
+```
+```bash
 /usr/src/app > ls -la
 /usr/src/app > tail -f application.log
 ```
