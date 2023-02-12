@@ -1,6 +1,6 @@
 # Home
 
-![Docker Image CI](https://img.shields.io/github/workflow/status/sjmayotte/route53-dynamic-dns/Docker%20Image%20CI?label=Docker%20Image%20CI)
+![Docker Image CI](https://img.shields.io/github/actions/workflow/status/sjmayotte/route53-dynamic-dns/docker-image.yml?branch=master)
 [![Docker Pulls](https://img.shields.io/docker/pulls/sjmayotte/route53-dynamic-dns)](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/)
 [![Docker Stars](https://img.shields.io/docker/stars/sjmayotte/route53-dynamic-dns)](https://hub.docker.com/r/sjmayotte/route53-dynamic-dns/)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fsjmayotte%2Froute53-dynamic-dns.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fsjmayotte%2Froute53-dynamic-dns?ref=badge_shield)
