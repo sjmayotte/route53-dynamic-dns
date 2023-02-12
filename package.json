@@ -5,7 +5,8 @@
   "author": "Steven Mayotte <mayots@gmail.com>",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "standard"
   },
   "dependencies": {
     "aws-sdk": "^2.1313.0",
@@ -18,10 +19,6 @@
   "private": true,
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^8.34.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.1.1"
+    "standard": "^17.0.0"
   }
 }
