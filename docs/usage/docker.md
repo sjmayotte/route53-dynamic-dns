@@ -93,6 +93,7 @@ See: [Logs](/route53-dynamic-dns/usage/logs/) for more details.
 ```bash
 docker exec -it [CONTAINER ID] sh
 ```
+
 ```bash
 /usr/src/app > ls -la
 /usr/src/app > tail -f application.log
