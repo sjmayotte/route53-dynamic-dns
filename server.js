@@ -63,6 +63,7 @@ if (LOG_TO_STDOUT) {
   })
 
   // Useful information displayed in console when process is started by NPM
+  // noinspection JSUnresolvedVariable
   console.log('Log4js initialized with level', logger.level.levelStr, '\n\nLogging is configured to STDOUT')
 } else {
   // Configure logging using log4js
@@ -80,6 +81,7 @@ if (LOG_TO_STDOUT) {
   })
 
   // Useful information displayed in console when process is started by NPM
+  // noinspection JSUnresolvedVariable
   console.log('Log4js initialized with level', logger.level.levelStr, '\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n')
 }
 
@@ -154,7 +156,7 @@ const ses = new AWS.SES()
 
 // Determine if file exists
 const RemoveFileNameIfItExists = function (filename) {
-  fs.stat(filename, function (err, stat) {
+  fs.stat(filename, function (err) {
     if (err && err.code === 'ENOENT') {
       // File doesn't exist.  Create a file with currentIP
       logger.info(filename, 'does not exist.  This file is used to cache the current IP in Route53.  The file will be created when it is needed')
@@ -168,7 +170,7 @@ const RemoveFileNameIfItExists = function (filename) {
 
 // Remove LastKnownIPFileName if it exists.
 const RemoveFileName = function (filename) {
-  fs.unlink(filename, function (err, data) {
+  fs.unlink(filename, function (err) {
     if (err) {
       // Unable to read file
       logger.error('Unable to remove', filename, 'Error code:', err.code)
@@ -213,7 +215,7 @@ const DeterminePublicIP = function () {
 // Get last known IP from local file
 const FindLastKnownIPLocally = function () {
   // Determine if file exists
-  fs.stat(LastKnownIPFileName, function (err, stat) {
+  fs.stat(LastKnownIPFileName, function (err) {
     if (err && err.code === 'ENOENT') {
       // File doesn't exist.  Create a file with currentIP
       logger.info(LastKnownIPFileName, 'does not exist.  The file will be created')
@@ -288,8 +290,7 @@ const CompareCurrentIPtoLastKnownIP = function () {
 // Update AWS Route53 based on new IP address
 const UpdateEntryInRoute53 = function () {
   // Prepare comment to be used in API call to AWS
-  let paramsComment = null
-  paramsComment = 'Updating public IP from ' + previousIP + ' to ' + currentIP + ' based on ISP change'
+  const paramsComment = 'Updating public IP from ' + previousIP + ' to ' + currentIP + ' based on ISP change'
 
   // Create params required by AWS-SDK for Route53
   const params = {
