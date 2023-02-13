@@ -81,13 +81,15 @@ CONTAINER ID    IMAGE                           COMMAND        CREATED          
 9998c92ff8a1    sjmayotte/route53-dynamic-dns   "npm start"    45 seconds ago     Up 44 seconds                 route53-dynamic-dns
 ```
 
+### Application logs
+
 View logs of `STDOUT` from `CONTAINER ID` (copy from output above)
 
 ```bash
 docker logs [CONTAINER ID]
 ```
 
-View Node.js process log, which is written to `application.log` in project root directory.
+View Node.js process log, which is written to `application.log` in the `data` directory of the project root.
 See: [Logs](/route53-dynamic-dns/usage/logs/) for more details.
 
 ```bash
@@ -96,7 +98,20 @@ docker exec -it [CONTAINER ID] sh
 
 ```bash
 /usr/src/app > ls -la
-/usr/src/app > tail -f application.log
+/usr/src/app > tail -f data/application.log
 ```
 
 If running container with `LOG_TO_STDOUT=true` you will see logs in STDOUT.
+
+### File for caching current IP address
+
+The current known IP address is written to `last-known-ip.txt` in the `data` directory of the project root. This file is
+used to reduce the number of lookups to Route53.
+
+```bash
+docker exec -it [CONTAINER ID] sh
+```
+
+```bash
+/usr/src/app > cat data/last-known-ip.txt
+```

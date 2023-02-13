@@ -3,6 +3,7 @@
 // Dependencies
 const https = require('https')
 const fs = require('fs')
+const path = require('path')
 const AWS = require('aws-sdk')
 const log4js = require('log4js')
 const dotenv = require('dotenv')
@@ -24,6 +25,7 @@ const SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS
 const UPDATE_FREQUENCY = parseInt(process.env.UPDATE_FREQUENCY || '60000')
 const IPCHECKER = process.env.IPCHECKER || 'ifconfig.co'
 const LOG_TO_STDOUT = JSON.parse(process.env.LOG_TO_STDOUT || 'false')
+const dataFolderPath = path.resolve(path.join(__dirname, 'data'))
 
 // Setup connection info for IPCHECKER services. Other services can
 // be added below in future if desired
@@ -43,6 +45,15 @@ const ipChecker = {
     fullname: 'ipify.org',
     url: 'https://api.ipify.org'
   }
+}
+
+// Make sure folder for application logs and last known IP address exists when running directly from Node
+try {
+  if (!fs.existsSync(dataFolderPath)) {
+    fs.mkdirSync(dataFolderPath)
+  }
+} catch (err) {
+  console.error('Error creating data folder for logs and temp files: ' + err)
 }
 
 // Initialize logging
@@ -70,7 +81,13 @@ if (LOG_TO_STDOUT) {
   // Max log size is 10MB with rotation keeping no more than 3 backups (backups are compressed)
   log4js.configure({
     appenders: {
-      app: { type: 'file', filename: 'application.log', maxLogSize: 10000000, backups: 3, compress: true }
+      app: {
+        type: 'file',
+        filename: path.join(dataFolderPath, 'application.log'),
+        maxLogSize: 10000000,
+        backups: 3,
+        compress: true
+      }
     },
     categories: {
       default: {
@@ -82,7 +99,7 @@ if (LOG_TO_STDOUT) {
 
   // Useful information displayed in console when process is started by NPM
   // noinspection JSUnresolvedVariable
-  console.log('Log4js initialized with level', logger.level.levelStr, '\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n')
+  console.log('Log4js initialized with level', logger.level.levelStr, '\n\nLogs located in application.log in', dataFolderPath, 'directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n')
 }
 
 // Handle error loading required environment variables from .env file
@@ -135,7 +152,7 @@ if (SEND_EMAIL_SES) {
 }
 
 // Local variables for the process
-const LastKnownIPFileName = 'Last-Known-IP.log'
+const LastKnownIPFileName = path.join(dataFolderPath, 'last-known-ip.txt')
 let currentIP = ''
 let previousIP = ''
 const route53Domains = ROUTE53_DOMAIN.split(',').map(domain => domain.trim())

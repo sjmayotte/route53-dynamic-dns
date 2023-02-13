@@ -26,7 +26,7 @@ vi .env
 rm .env.example
 ```
 
-See [Minimum ENV Variables](/route53-dynamic-dns/config/env/#minimum-env-variables) for example of minimium
+See [Minimum ENV Variables](/route53-dynamic-dns/config/env/#minimum-env-variables) for example of minimum
 configuration.
 
 ## Installation
@@ -34,5 +34,5 @@ configuration.
 Project uses [NPM](https://www.npmjs.com) package manager. Install dependencies from `package.json`.
 
 ```bash
-npm install
+npm ci --omit=dev
 ```

@@ -30,12 +30,15 @@ WORKDIR /usr/src/app
 
 # Install only production dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
 COPY --chown=node:node package*.json ./
 RUN npm ci --omit=dev
 
 # Bundle app source
 COPY --chown=node:node . .
+
+# Create data directory for application logs and temporary file with last known IP address with read/write permissions
+# for all users to support running the container with alternate user
+RUN mkdir data && chmod 777 data
 
 # Don’t run Node.js apps as root
 USER node

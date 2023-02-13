@@ -15,7 +15,7 @@ follows [Semantic Versioning](https://semver.org/). You can expect breaking chan
 1.X.X -> 2.X.X), but they should not exist in MINOR and PATCH versions. Since project inception there has not been a
 release that is not backwards compatible. The code base is stable. There is no expectation of issues with backwards
 compatibility in future versions, but everyone should be aware of how versions are managed. For most people looking to
-be hands off on upgrades, it should be safe to use `latest` version. If your primary concern is stability, it is
+be hands-off on upgrades, it should be safe to use `latest` version. If your primary concern is stability, it is
 recommended that you use a specific version (see below).
 
 ### `route53-dynamic-dns:v1.2.1`
@@ -25,7 +25,7 @@ as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) w
 
 ### `route53-dynamic-dns:dev`
 
-Automated build triggers with every `git push` to `master` branch. This version is not guarenteed to be stable. If you
+Automated build triggers with every `git push` to `master` branch. This version is not guaranteed to be stable. If you
 are looking for a stable version, please use `route53-dynamic-dns:v1.2.1` or `route53-dynamic-dns:latest`.
 
 ## Pull Image
