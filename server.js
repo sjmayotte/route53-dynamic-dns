@@ -138,6 +138,8 @@ if (SEND_EMAIL_SES) {
 const LastKnownIPFileName = 'Last-Known-IP.log'
 let currentIP = ''
 let previousIP = ''
+const route53Domains = ROUTE53_DOMAIN.split(',').map(domain => domain.trim())
+const firstRoute53Domain = route53Domains[0]
 let SentErrorEmail = false
 let FirstRun = true
 
@@ -222,20 +224,20 @@ const FindLastKnownIPLocally = function () {
 
       const params = {
         HostedZoneId: ROUTE53_HOSTED_ZONE_ID,
-        RecordName: ROUTE53_DOMAIN,
+        RecordName: firstRoute53Domain,
         RecordType: ROUTE53_TYPE
       }
 
-      logger.info('Initiating request to AWS Route53 (Method: testDNSAnswer) to get IP for', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'Record )')
+      logger.info('Initiating request to AWS Route53 (Method: testDNSAnswer) to get IP for', firstRoute53Domain, '(', ROUTE53_TYPE, 'Record )')
 
       route53.testDNSAnswer(params, function (err, data) {
         if (err) {
-          logger.error('Unable to lookup', ROUTE53_DOMAIN, 'in AWS Route53 using AWS-SDK!  Error data below:\n', err, err.stack)
+          logger.error('Unable to lookup', firstRoute53Domain, 'in AWS Route53 using AWS-SDK!  Error data below:\n', err, err.stack)
           SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
         } else {
           previousIP += data.RecordData
           // In this case only set currentIP = previousIP
-          logger.info('AWS Route53 responded that', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'Record ) is pointing to', previousIP)
+          logger.info('AWS Route53 responded that', firstRoute53Domain, '(', ROUTE53_TYPE, 'Record ) is pointing to', previousIP)
           // Update LastKnownIPFileName with current IP
           WriteCurrentIPInLastKnownIPFileName(previousIP)
         }
@@ -283,12 +285,13 @@ const CompareCurrentIPtoLastKnownIP = function () {
   } else {
     // They don't match, so update Route53
     logger.info('Current Public IP does not match last known Public IP\nCurrent Public IP (' + ipChecker[IPCHECKER].fullname + '):', currentIP, '\nLast Known Public IP (', LastKnownIPFileName, '):', previousIP)
-    UpdateEntryInRoute53()
+    // Update Route53 for each domain (if more than one supplied in config)
+    route53Domains.forEach(route53Domain => UpdateEntryInRoute53(route53Domain))
   }
 }
 
 // Update AWS Route53 based on new IP address
-const UpdateEntryInRoute53 = function () {
+const UpdateEntryInRoute53 = function (route53Domain) {
   // Prepare comment to be used in API call to AWS
   const paramsComment = 'Updating public IP from ' + previousIP + ' to ' + currentIP + ' based on ISP change'
 
@@ -300,7 +303,7 @@ const UpdateEntryInRoute53 = function () {
         {
           Action: 'UPSERT',
           ResourceRecordSet: {
-            Name: ROUTE53_DOMAIN,
+            Name: route53Domain,
             ResourceRecords: [
               {
                 Value: currentIP
@@ -315,20 +318,20 @@ const UpdateEntryInRoute53 = function () {
     }
   }
 
-  logger.info('Initiating request to AWS Route53 (Method: changeResourceRecordSets)')
+  logger.info('Initiating request to AWS Route53 (Method: changeResourceRecordSets) for domain', route53Domain)
 
   // Make the call to update Route53 record
   route53.changeResourceRecordSets(params, function (err, data) {
     if (err) {
-      logger.error('Unable to update Route53!  Error data below:\n', err, err.stack)
+      logger.error('Unable to update Route53 for domain', route53Domain, '!  Error data below:\n', err, err.stack)
       SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
     } else {
       // Successful response
-      logger.info('Request successfully submitted to AWS Route53 to update', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'record) with new Public IP:', currentIP, '\nAWS Route 53 response:\n', data)
+      logger.info('Request successfully submitted to AWS Route53 to update', route53Domain, '(', ROUTE53_TYPE, 'record) with new Public IP:', currentIP, '\nAWS Route 53 response:\n', data)
       // Update LastKnownIPFileName with new Public IP
       WriteCurrentIPInLastKnownIPFileName(currentIP)
       // Send email notifying user of change
-      SendEmailNotificationAWSSES('Route53', '')
+      SendEmailNotificationAWSSES('Route53', '', route53Domain)
       SentErrorEmail = false
     }
   })
@@ -338,14 +341,14 @@ const UpdateEntryInRoute53 = function () {
 const SendErrorNotificationEmail = function (EmailBodyErrorMessage) {
   if (!SentErrorEmail) {
     SentErrorEmail = true
-    SendEmailNotificationAWSSES('Error', EmailBodyErrorMessage)
+    SendEmailNotificationAWSSES('Error', EmailBodyErrorMessage, '')
   } else {
     logger.info('Email notification already sent.  Suppressing email notification to avoid spamming admin.')
   }
 }
 
 // Send email notification using AWS SES
-const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMessage) {
+const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMessage, route53Domain) {
   // Skip sending SES email if the flag is set to false.
   if (!SEND_EMAIL_SES) {
     logger.info('AWS SES email notification disabled.  If you want to enable, please update config.')
@@ -381,9 +384,9 @@ const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMe
 
   switch (EmailMessageType) {
     case 'Route53':
-      params.Message.Subject.Data = '[INFO]: Route53 Public IP Updated'
-      params.Message.Body.Html.Data = 'Request successfully submitted to AWS Route53 to update ' + ROUTE53_DOMAIN + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
-      params.Message.Body.Text.Data = 'Request successfully submitted to AWS Route53 to update ' + ROUTE53_DOMAIN + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
+      params.Message.Subject.Data = '[INFO]: Route53 Public IP Updated for ' + route53Domain
+      params.Message.Body.Html.Data = 'Request successfully submitted to AWS Route53 to update ' + route53Domain + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
+      params.Message.Body.Text.Data = 'Request successfully submitted to AWS Route53 to update ' + route53Domain + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
       break
     case 'Error':
       params.Message.Subject.Data = '[ERROR]: route53-dynamic-dns'
