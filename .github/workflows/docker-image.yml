@@ -19,27 +19,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout code
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Set version of node to use
-    - name: Use Node.js 19
-      uses: actions/setup-node@v3
-      with:
-        node-version: 19
+      # Set version of node to use
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.14
 
-    # This command is similar to npm install, except it's meant to be used in
-    # automated environments such as test platforms, continuous integration,
-    # and deployment -- or any situation where you want to make sure you're
-    # doing a clean install of your dependencies.
-    - run: npm ci
+      # This command is similar to npm install, except it's meant to be used in
+      # automated environments such as test platforms, continuous integration,
+      # and deployment -- or any situation where you want to make sure you're
+      # doing a clean install of your dependencies.
+      - run: npm ci
 
-    # Run build script.  If it doesn't exist, don't error
-    - run: npm run build --if-present
+      # Run build script.  If it doesn't exist, don't error
+      - run: npm run build --if-present
 
-    # Run tests
-    - run: npm test
+      # Run tests
+      - run: npm test
 
   docker:
     name: Build Docker Container
@@ -50,72 +50,72 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout code
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Set tag to release version tag if one is present (in format v.1.0.0)
-    # otherwise consider this a dev build
-    - name: Set Tag Output
-      id: vars
-      run: if [[ ${GITHUB_REF#refs/*/}  == v* ]]; then echo ::set-output name=tag::${GITHUB_REF#refs/*/}; else echo ::set-output name=tag::"dev"; fi
+      # Set tag to release version tag if one is present (in format v.1.0.0)
+      # otherwise consider this a dev build
+      - name: Set Tag Output
+        id: vars
+        run: if [[ ${GITHUB_REF#refs/*/}  == v* ]]; then echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT; else echo "tag=dev" >> $GITHUB_OUTPUT; fi
 
-    # Setup QEMU for building various versions of container
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      # Setup QEMU for building various versions of container
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-    # Setup Buildx before building container
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      # Setup Buildx before building container
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    # Login to DockerHub
-    - name: Login to DockerHub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # Login to DockerHub
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    # Set variable for current date used in container label
-    - name: Get Current Date
-      id: date
-      run: echo "::set-output name=date::$(date --utc +'%Y-%m-%dT%H:%M:%SZ')"
+      # Set variable for current date used in container label
+      - name: Get Current Date
+        id: date
+        run: echo "date=$(date --utc +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
-    # If release tag in format (v1.0.0) tag container with
-    # git tag and also tag with latest
-    - name: Build & Push Container for Release Version & Latest Tag
-      uses: docker/build-push-action@v4
-      if: ${{ startsWith(steps.vars.outputs.tag, 'v') }}
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
-        tags: |
-          sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
-          sjmayotte/route53-dynamic-dns:latest
-        build-args: |
+      # If release tag in format (v1.0.0) tag container with
+      # git tag and also tag with latest
+      - name: Build & Push Container for Release Version & Latest Tag
+        uses: docker/build-push-action@v4
+        if: ${{ startsWith(steps.vars.outputs.tag, 'v') }}
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
+          tags: |
+            sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
+            sjmayotte/route53-dynamic-dns:latest
+          build-args: |
             GIT_SHA=$GITHUB_SHA
             BUILD_DATE=${{ steps.date.outputs.date }}
             DOCKER_TAG=${{ steps.vars.outputs.tag }}
 
-    # Tag container for non release versions
-    - name: Build & Push Container for Dev Tag
-      uses: docker/build-push-action@v4
-      if: ${{ startsWith(steps.vars.outputs.tag, 'v') == false }}
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
-        tags: sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
-        build-args: |
+      # Tag container for non release versions
+      - name: Build & Push Container for Dev Tag
+        uses: docker/build-push-action@v4
+        if: ${{ startsWith(steps.vars.outputs.tag, 'v') == false }}
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
+          tags: sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
+          build-args: |
             GIT_SHA=$GITHUB_SHA
             BUILD_DATE=${{ steps.date.outputs.date }}
             DOCKER_TAG=${{ steps.vars.outputs.tag }}
 
-    # Show image digest
-    - name: Image Digest
-      run: echo ${{ steps.docker_build.outputs.digest }}
+      # Show image digest
+      - name: Image Digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
 
   publish-docs:
     name: Create & Publish Docs

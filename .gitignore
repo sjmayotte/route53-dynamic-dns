@@ -129,3 +129,6 @@ dist
 
 # Local History for Visual Studio Code
 .history/
+
+# Ignore local directory for application logs and last-known-ip.txt
+data

@@ -6,3 +6,7 @@ Dockerfile
 .env.example
 .git
 .gitignore
+data
+.idea
+.devcontainer
+.github

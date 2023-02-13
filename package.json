@@ -9,12 +9,12 @@
     "test": "standard && markdownlint-cli2 '*.md' '**/*.md' '#node_modules'"
   },
   "dependencies": {
-    "aws-sdk": "^2.1313.0",
+    "aws-sdk": "^2.1314.0",
     "dotenv": "^16.0.3",
     "log4js": "^6.7.1"
   },
   "engines": {
-    "node": "^19.6"
+    "node": "^18.14"
   },
   "private": true,
   "license": "MIT",
