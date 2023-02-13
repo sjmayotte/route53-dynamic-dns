@@ -6,6 +6,12 @@ ARG BUILD_DATE
 ARG DOCKER_TAG
 ARG GIT_SHA
 
+# Optimize Node.js tooling for production
+ENV NODE_ENV production
+
+# Install timezone database to allow setting timezone through TZ environment variable
+RUN apk add --no-cache tzdata
+
 LABEL org.opencontainers.image.created=$BUILD_DATE \
   org.opencontainers.image.authors="Steven Mayotte" \
   org.opencontainers.image.url="https://github.com/sjmayotte/route53-dynamic-dns" \
@@ -19,23 +25,19 @@ LABEL org.opencontainers.image.created=$BUILD_DATE \
   org.opencontainers.image.title="route53-dynamic-dns" \
   org.opencontainers.image.description="Update AWS Route53 hosted zone with current public IP address. Alternative to Dynamic DNS services such as Dyn, No-IP, etc"
 
-# Install timezone database to allow setting timezone through TZ environment variable
-RUN apk add --no-cache tzdata
-
 # Create app directory
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# Install app dependencies
-COPY package.json /usr/src/app/
-RUN npm install
+# Install only production dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY --chown=node:node package*.json ./
+RUN npm ci --omit=dev
 
 # Bundle app source
-COPY . /usr/src/app
+COPY --chown=node:node . .
 
-# Change file-owner to non-root user
-RUN chown -R node:node /usr/src/app
-RUN chmod -R 755 /usr/src/app
+# Don’t run Node.js apps as root
 USER node
 
 # Run server.js
