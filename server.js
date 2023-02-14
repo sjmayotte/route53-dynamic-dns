@@ -4,17 +4,15 @@
 const https = require('https')
 const fs = require('fs')
 const path = require('path')
-const AWS = require('aws-sdk')
 const log4js = require('log4js')
 const dotenv = require('dotenv')
+const { Route53Client, TestDNSAnswerCommand, ChangeResourceRecordSetsCommand } = require('@aws-sdk/client-route-53')
+const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses')
 
 // Initialize dotenv to try and load .env file
 const dotenvresult = dotenv.config()
 
 // Global configuration variables set using environment variables
-const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID
-const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY
-const AWS_REGION = process.env.AWS_REGION
 const ROUTE53_HOSTED_ZONE_ID = process.env.ROUTE53_HOSTED_ZONE_ID
 const ROUTE53_DOMAIN = process.env.ROUTE53_DOMAIN
 const ROUTE53_TYPE = process.env.ROUTE53_TYPE
@@ -160,18 +158,15 @@ const firstRoute53Domain = route53Domains[0]
 let SentErrorEmail = false
 let FirstRun = true
 
-// Set required configuration variables for AWS-SDK
-AWS.config.update(
-  {
-    region: AWS_REGION,
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY
-  }
-)
-
-// Create required AWS-SDK objects
-const route53 = new AWS.Route53()
-const ses = new AWS.SES()
+/**
+ Create clients for AWS services.
+ Note that there are multiple ways of configuring AWS region and credentials in AWS SDK v3.
+ Since we already got AWS_REGION, AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY into environment variables,
+ AWS SDK will automatically detect and read those.
+ See https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/configuring-the-jssdk.html
+ */
+const route53Client = new Route53Client({})
+const sesClient = new SESClient({})
 
 // Determine if file exists
 const RemoveFileNameIfItExists = function (filename) {
@@ -236,29 +231,31 @@ const FindLastKnownIPLocally = function () {
   // Determine if file exists
   fs.stat(LastKnownIPFileName, function (err) {
     if (err && err.code === 'ENOENT') {
-      // File doesn't exist.  Create a file with currentIP
+      // File doesn't exist.  Create a file with currentIP retrieved from Route53
       logger.info(LastKnownIPFileName, 'does not exist.  The file will be created')
+      logger.info('Initiating request to AWS Route53 (Method: testDNSAnswer) to get IP for', firstRoute53Domain, '(', ROUTE53_TYPE, 'Record )')
 
-      const params = {
+      // Create AWS SDK command to retrieve current IP for Route53 record
+      const testDNSAnswerCommand = new TestDNSAnswerCommand({
         HostedZoneId: ROUTE53_HOSTED_ZONE_ID,
         RecordName: firstRoute53Domain,
         RecordType: ROUTE53_TYPE
-      }
-
-      logger.info('Initiating request to AWS Route53 (Method: testDNSAnswer) to get IP for', firstRoute53Domain, '(', ROUTE53_TYPE, 'Record )')
-
-      route53.testDNSAnswer(params, function (err, data) {
-        if (err) {
-          logger.error('Unable to lookup', firstRoute53Domain, 'in AWS Route53 using AWS-SDK!  Error data below:\n', err, err.stack)
-          SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
-        } else {
+      })
+      // Send the command by using the AWS SDK client for Route53, using the promise pattern
+      route53Client
+        .send(testDNSAnswerCommand)
+        .then((data) => {
+          // Successful response
           previousIP += data.RecordData
           // In this case only set currentIP = previousIP
           logger.info('AWS Route53 responded that', firstRoute53Domain, '(', ROUTE53_TYPE, 'Record ) is pointing to', previousIP)
           // Update LastKnownIPFileName with current IP
           WriteCurrentIPInLastKnownIPFileName(previousIP)
-        }
-      })
+        })
+        .catch((err) => {
+          logger.error('Unable to lookup', firstRoute53Domain, 'in AWS Route53 using AWS-SDK!  Error data below:\n', err, err.stack)
+          SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
+        })
     } else if (err) {
       // File exists, but some other error occurs
       logger.error('Unable to create', LastKnownIPFileName, '\n', err)
@@ -309,11 +306,10 @@ const CompareCurrentIPtoLastKnownIP = function () {
 
 // Update AWS Route53 based on new IP address
 const UpdateEntryInRoute53 = function (route53Domain) {
-  // Prepare comment to be used in API call to AWS
-  const paramsComment = 'Updating public IP from ' + previousIP + ' to ' + currentIP + ' based on ISP change'
+  logger.info('Initiating request to AWS Route53 (Method: changeResourceRecordSets) for domain', route53Domain)
 
-  // Create params required by AWS-SDK for Route53
-  const params = {
+  // Create AWS SDK command for changing the Route53 record
+  const changeResourceRecordSetsCommand = new ChangeResourceRecordSetsCommand({
     HostedZoneId: ROUTE53_HOSTED_ZONE_ID,
     ChangeBatch: {
       Changes: [
@@ -327,22 +323,17 @@ const UpdateEntryInRoute53 = function (route53Domain) {
               }
             ],
             Type: ROUTE53_TYPE,
-            TTL: ROUTE53_TTL
+            TTL: parseInt(ROUTE53_TTL)
           }
         }
       ],
-      Comment: paramsComment
+      Comment: 'Updating public IP from ' + previousIP + ' to ' + currentIP + ' based on ISP change'
     }
-  }
-
-  logger.info('Initiating request to AWS Route53 (Method: changeResourceRecordSets) for domain', route53Domain)
-
-  // Make the call to update Route53 record
-  route53.changeResourceRecordSets(params, function (err, data) {
-    if (err) {
-      logger.error('Unable to update Route53 for domain', route53Domain, '!  Error data below:\n', err, err.stack)
-      SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
-    } else {
+  })
+  // Send the command by using the AWS SDK client for Route53, using the promise pattern
+  route53Client
+    .send(changeResourceRecordSetsCommand)
+    .then((data) => {
       // Successful response
       logger.info('Request successfully submitted to AWS Route53 to update', route53Domain, '(', ROUTE53_TYPE, 'record) with new Public IP:', currentIP, '\nAWS Route 53 response:\n', data)
       // Update LastKnownIPFileName with new Public IP
@@ -350,8 +341,11 @@ const UpdateEntryInRoute53 = function (route53Domain) {
       // Send email notifying user of change
       SendEmailNotificationAWSSES('Route53', '', route53Domain)
       SentErrorEmail = false
-    }
-  })
+    })
+    .catch((err) => {
+      logger.error('Unable to update Route53 for domain', route53Domain, '!  Error data below:\n', err, err.stack)
+      SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
+    })
 }
 
 // Handles sending error email
@@ -372,8 +366,10 @@ const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMe
     return
   }
 
+  logger.info('Initiating request to AWS SES (Method: sendEmail)')
+
   // Set params required for AWS SES
-  const params = {
+  const commandInput = {
     Destination: {
       BccAddresses: [],
       CcAddresses: [],
@@ -401,33 +397,33 @@ const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMe
 
   switch (EmailMessageType) {
     case 'Route53':
-      params.Message.Subject.Data = '[INFO]: Route53 Public IP Updated for ' + route53Domain
-      params.Message.Body.Html.Data = 'Request successfully submitted to AWS Route53 to update ' + route53Domain + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
-      params.Message.Body.Text.Data = 'Request successfully submitted to AWS Route53 to update ' + route53Domain + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
+      commandInput.Message.Subject.Data = '[INFO]: Route53 Public IP Updated for ' + route53Domain
+      commandInput.Message.Body.Html.Data = 'Request successfully submitted to AWS Route53 to update ' + route53Domain + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
+      commandInput.Message.Body.Text.Data = 'Request successfully submitted to AWS Route53 to update ' + route53Domain + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
       break
     case 'Error':
-      params.Message.Subject.Data = '[ERROR]: route53-dynamic-dns'
-      params.Message.Body.Html.Data = EmailBodyErrorMessage
-      params.Message.Body.Text.Data = EmailBodyErrorMessage
+      commandInput.Message.Subject.Data = '[ERROR]: route53-dynamic-dns'
+      commandInput.Message.Body.Html.Data = EmailBodyErrorMessage
+      commandInput.Message.Body.Text.Data = EmailBodyErrorMessage
       break
     default:
-      params.Message.Subject.Data = '[INFO]: route53-dynamic-dns Started'
-      params.Message.Body.Html.Data = 'route53-dynamic-dns process was started'
-      params.Message.Body.Text.Data = 'route53-dynamic-dns process was started'
+      commandInput.Message.Subject.Data = '[INFO]: route53-dynamic-dns Started'
+      commandInput.Message.Body.Html.Data = 'route53-dynamic-dns process was started'
+      commandInput.Message.Body.Text.Data = 'route53-dynamic-dns process was started'
       break
   }
-
-  logger.info('Initiating request to AWS SES (Method: sendEmail)')
-
-  // Send email using AWS-SDK
-  ses.sendEmail(params, function (err, data) {
-    if (err) {
+  // Create AWS SDK command for sending email
+  const sendEmailCommand = new SendEmailCommand(commandInput)
+  // Send the command by using the AWS SDK client for Route53, using the promise pattern
+  sesClient
+    .send(sendEmailCommand)
+    .then((data) => {
+      logger.info('Request successfully submitted to AWS SES to send email.\n', data)
+    })
+    .catch((err) => {
       logger.error('Unable to send email via AWS SES!  Error data below:\n', err, err.stack)
       SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
-    } else {
-      logger.info('Request successfully submitted to AWS SES to send email.\n', data)
-    }
-  })
+    })
 }
 
 // Wrap up execution logic into a function

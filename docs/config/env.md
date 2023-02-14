@@ -24,7 +24,7 @@ Environment variables are required to run the process.
 <!-- markdownlint-enable line-length -->
 
 For help setting up IAM user access
-see [AWS Javascript SDK - Getting Started](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html).
+see [AWS Javascript SDK (v3) - Getting Started](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/getting-started-nodejs.html).
 
 When multiple domains are specified, same Public IP will be updated for each domain.
 
