@@ -3,6 +3,7 @@
 // Dependencies
 const https = require('https')
 const fs = require('fs')
+const path = require('path')
 const AWS = require('aws-sdk')
 const log4js = require('log4js')
 const dotenv = require('dotenv')
@@ -24,6 +25,7 @@ const SES_FROM_ADDRESS = process.env.SES_FROM_ADDRESS
 const UPDATE_FREQUENCY = parseInt(process.env.UPDATE_FREQUENCY || '60000')
 const IPCHECKER = process.env.IPCHECKER || 'ifconfig.co'
 const LOG_TO_STDOUT = JSON.parse(process.env.LOG_TO_STDOUT || 'false')
+const dataFolderPath = path.resolve(path.join(__dirname, 'data'))
 
 // Setup connection info for IPCHECKER services. Other services can
 // be added below in future if desired
@@ -45,6 +47,15 @@ const ipChecker = {
   }
 }
 
+// Make sure folder for application logs and last known IP address exists when running directly from Node
+try {
+  if (!fs.existsSync(dataFolderPath)) {
+    fs.mkdirSync(dataFolderPath)
+  }
+} catch (err) {
+  console.error('Error creating data folder for logs and temp files: ' + err)
+}
+
 // Initialize logging
 const logger = log4js.getLogger()
 logger.level = 'info'
@@ -63,13 +74,20 @@ if (LOG_TO_STDOUT) {
   })
 
   // Useful information displayed in console when process is started by NPM
+  // noinspection JSUnresolvedVariable
   console.log('Log4js initialized with level', logger.level.levelStr, '\n\nLogging is configured to STDOUT')
 } else {
   // Configure logging using log4js
   // Max log size is 10MB with rotation keeping no more than 3 backups (backups are compressed)
   log4js.configure({
     appenders: {
-      app: { type: 'file', filename: 'application.log', maxLogSize: 10000000, backups: 3, compress: true }
+      app: {
+        type: 'file',
+        filename: path.join(dataFolderPath, 'application.log'),
+        maxLogSize: 10000000,
+        backups: 3,
+        compress: true
+      }
     },
     categories: {
       default: {
@@ -80,7 +98,8 @@ if (LOG_TO_STDOUT) {
   })
 
   // Useful information displayed in console when process is started by NPM
-  console.log('Log4js initialized with level', logger.level.levelStr, '\n\nLogs located in application.log in working directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n')
+  // noinspection JSUnresolvedVariable
+  console.log('Log4js initialized with level', logger.level.levelStr, '\n\nLogs located in application.log in', dataFolderPath, 'directory\n\nIf running in Docker Container use the following command to access a shell:\n   docker exec -it [container_id] sh \n\n')
 }
 
 // Handle error loading required environment variables from .env file
@@ -133,9 +152,11 @@ if (SEND_EMAIL_SES) {
 }
 
 // Local variables for the process
-const LastKnownIPFileName = 'Last-Known-IP.log'
+const LastKnownIPFileName = path.join(dataFolderPath, 'last-known-ip.txt')
 let currentIP = ''
 let previousIP = ''
+const route53Domains = ROUTE53_DOMAIN.split(',').map(domain => domain.trim())
+const firstRoute53Domain = route53Domains[0]
 let SentErrorEmail = false
 let FirstRun = true
 
@@ -154,7 +175,7 @@ const ses = new AWS.SES()
 
 // Determine if file exists
 const RemoveFileNameIfItExists = function (filename) {
-  fs.stat(filename, function (err, stat) {
+  fs.stat(filename, function (err) {
     if (err && err.code === 'ENOENT') {
       // File doesn't exist.  Create a file with currentIP
       logger.info(filename, 'does not exist.  This file is used to cache the current IP in Route53.  The file will be created when it is needed')
@@ -168,7 +189,7 @@ const RemoveFileNameIfItExists = function (filename) {
 
 // Remove LastKnownIPFileName if it exists.
 const RemoveFileName = function (filename) {
-  fs.unlink(filename, function (err, data) {
+  fs.unlink(filename, function (err) {
     if (err) {
       // Unable to read file
       logger.error('Unable to remove', filename, 'Error code:', err.code)
@@ -213,27 +234,27 @@ const DeterminePublicIP = function () {
 // Get last known IP from local file
 const FindLastKnownIPLocally = function () {
   // Determine if file exists
-  fs.stat(LastKnownIPFileName, function (err, stat) {
+  fs.stat(LastKnownIPFileName, function (err) {
     if (err && err.code === 'ENOENT') {
       // File doesn't exist.  Create a file with currentIP
       logger.info(LastKnownIPFileName, 'does not exist.  The file will be created')
 
       const params = {
         HostedZoneId: ROUTE53_HOSTED_ZONE_ID,
-        RecordName: ROUTE53_DOMAIN,
+        RecordName: firstRoute53Domain,
         RecordType: ROUTE53_TYPE
       }
 
-      logger.info('Initiating request to AWS Route53 (Method: testDNSAnswer) to get IP for', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'Record )')
+      logger.info('Initiating request to AWS Route53 (Method: testDNSAnswer) to get IP for', firstRoute53Domain, '(', ROUTE53_TYPE, 'Record )')
 
       route53.testDNSAnswer(params, function (err, data) {
         if (err) {
-          logger.error('Unable to lookup', ROUTE53_DOMAIN, 'in AWS Route53 using AWS-SDK!  Error data below:\n', err, err.stack)
+          logger.error('Unable to lookup', firstRoute53Domain, 'in AWS Route53 using AWS-SDK!  Error data below:\n', err, err.stack)
           SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
         } else {
           previousIP += data.RecordData
           // In this case only set currentIP = previousIP
-          logger.info('AWS Route53 responded that', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'Record ) is pointing to', previousIP)
+          logger.info('AWS Route53 responded that', firstRoute53Domain, '(', ROUTE53_TYPE, 'Record ) is pointing to', previousIP)
           // Update LastKnownIPFileName with current IP
           WriteCurrentIPInLastKnownIPFileName(previousIP)
         }
@@ -281,15 +302,15 @@ const CompareCurrentIPtoLastKnownIP = function () {
   } else {
     // They don't match, so update Route53
     logger.info('Current Public IP does not match last known Public IP\nCurrent Public IP (' + ipChecker[IPCHECKER].fullname + '):', currentIP, '\nLast Known Public IP (', LastKnownIPFileName, '):', previousIP)
-    UpdateEntryInRoute53()
+    // Update Route53 for each domain (if more than one supplied in config)
+    route53Domains.forEach(route53Domain => UpdateEntryInRoute53(route53Domain))
   }
 }
 
 // Update AWS Route53 based on new IP address
-const UpdateEntryInRoute53 = function () {
+const UpdateEntryInRoute53 = function (route53Domain) {
   // Prepare comment to be used in API call to AWS
-  let paramsComment = null
-  paramsComment = 'Updating public IP from ' + previousIP + ' to ' + currentIP + ' based on ISP change'
+  const paramsComment = 'Updating public IP from ' + previousIP + ' to ' + currentIP + ' based on ISP change'
 
   // Create params required by AWS-SDK for Route53
   const params = {
@@ -299,7 +320,7 @@ const UpdateEntryInRoute53 = function () {
         {
           Action: 'UPSERT',
           ResourceRecordSet: {
-            Name: ROUTE53_DOMAIN,
+            Name: route53Domain,
             ResourceRecords: [
               {
                 Value: currentIP
@@ -314,20 +335,20 @@ const UpdateEntryInRoute53 = function () {
     }
   }
 
-  logger.info('Initiating request to AWS Route53 (Method: changeResourceRecordSets)')
+  logger.info('Initiating request to AWS Route53 (Method: changeResourceRecordSets) for domain', route53Domain)
 
   // Make the call to update Route53 record
   route53.changeResourceRecordSets(params, function (err, data) {
     if (err) {
-      logger.error('Unable to update Route53!  Error data below:\n', err, err.stack)
+      logger.error('Unable to update Route53 for domain', route53Domain, '!  Error data below:\n', err, err.stack)
       SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
     } else {
       // Successful response
-      logger.info('Request successfully submitted to AWS Route53 to update', ROUTE53_DOMAIN, '(', ROUTE53_TYPE, 'record) with new Public IP:', currentIP, '\nAWS Route 53 response:\n', data)
+      logger.info('Request successfully submitted to AWS Route53 to update', route53Domain, '(', ROUTE53_TYPE, 'record) with new Public IP:', currentIP, '\nAWS Route 53 response:\n', data)
       // Update LastKnownIPFileName with new Public IP
       WriteCurrentIPInLastKnownIPFileName(currentIP)
       // Send email notifying user of change
-      SendEmailNotificationAWSSES('Route53', '')
+      SendEmailNotificationAWSSES('Route53', '', route53Domain)
       SentErrorEmail = false
     }
   })
@@ -337,14 +358,14 @@ const UpdateEntryInRoute53 = function () {
 const SendErrorNotificationEmail = function (EmailBodyErrorMessage) {
   if (!SentErrorEmail) {
     SentErrorEmail = true
-    SendEmailNotificationAWSSES('Error', EmailBodyErrorMessage)
+    SendEmailNotificationAWSSES('Error', EmailBodyErrorMessage, '')
   } else {
     logger.info('Email notification already sent.  Suppressing email notification to avoid spamming admin.')
   }
 }
 
 // Send email notification using AWS SES
-const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMessage) {
+const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMessage, route53Domain) {
   // Skip sending SES email if the flag is set to false.
   if (!SEND_EMAIL_SES) {
     logger.info('AWS SES email notification disabled.  If you want to enable, please update config.')
@@ -380,9 +401,9 @@ const SendEmailNotificationAWSSES = function (EmailMessageType, EmailBodyErrorMe
 
   switch (EmailMessageType) {
     case 'Route53':
-      params.Message.Subject.Data = '[INFO]: Route53 Public IP Updated'
-      params.Message.Body.Html.Data = 'Request successfully submitted to AWS Route53 to update ' + ROUTE53_DOMAIN + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
-      params.Message.Body.Text.Data = 'Request successfully submitted to AWS Route53 to update ' + ROUTE53_DOMAIN + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
+      params.Message.Subject.Data = '[INFO]: Route53 Public IP Updated for ' + route53Domain
+      params.Message.Body.Html.Data = 'Request successfully submitted to AWS Route53 to update ' + route53Domain + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
+      params.Message.Body.Text.Data = 'Request successfully submitted to AWS Route53 to update ' + route53Domain + ' (' + ROUTE53_TYPE + ' record) with new Public IP: ' + currentIP
       break
     case 'Error':
       params.Message.Subject.Data = '[ERROR]: route53-dynamic-dns'
@@ -421,4 +442,14 @@ const RunScript = function () {
 }
 
 // Execute function RunScript at interval set in UPDATE_FREQUENCY (ex: 60000, which equals 60 seconds or 1 minute)
-setInterval(RunScript, UPDATE_FREQUENCY)
+const intervalId = setInterval(RunScript, UPDATE_FREQUENCY)
+
+// Shutdown by clearing recurring call to RunScript and return when complete
+const shutdown = () => {
+  logger.info('Stopping server.js process with id ' + intervalId + '...')
+  clearInterval(intervalId)
+}
+
+// Gracefully shutdown process by trapping SIGINT and SIGTERM signals
+process.on('SIGINT', shutdown)
+process.on('SIGTERM', shutdown)

@@ -14,24 +14,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout code
-    - name: Checkout
-      uses: actions/checkout@v2
-    
-    # Set version of node to use
-    - name: Use Node.js 16
-      uses: actions/setup-node@v1
-      with:
-        node-version: '16'
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # This command is similar to npm install, except it's meant to be used in
-    # automated environments such as test platforms, continuous integration,
-    # and deployment -- or any situation where you want to make sure you're
-    # doing a clean install of your dependencies.    
-    - run: npm ci
-    
-    # Run build script.  If it doesn't exist, don't error
-    - run: npm run build --if-present
+      # Set version of node to use
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.14
 
-    # Run tests  
-    - run: npm test
+      # This command is similar to npm install, except it's meant to be used in
+      # automated environments such as test platforms, continuous integration,
+      # and deployment -- or any situation where you want to make sure you're
+      # doing a clean install of your dependencies.
+      - run: npm ci
+
+      # Run build script.  If it doesn't exist, don't error
+      - run: npm run build --if-present
+
+      # Run tests
+      - run: npm test

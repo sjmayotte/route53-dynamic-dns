@@ -5,24 +5,21 @@
   "author": "Steven Mayotte <mayots@gmail.com>",
   "main": "server.js",
   "scripts": {
-    "start": "node startup.js"
+    "start": "node server.js",
+    "test": "standard && markdownlint-cli2 '*.md' '**/*.md' '#node_modules'"
   },
   "dependencies": {
-    "aws-sdk": "^2.1030.0",
-    "dotenv": "^10.0.0",
-    "forever-monitor": "^3.0.3",
-    "log4js": "^6.3.0"
+    "aws-sdk": "^2.1314.0",
+    "dotenv": "^16.0.3",
+    "log4js": "^6.7.1"
   },
   "engines": {
-    "node": "^16.8"
+    "node": "^18.14"
   },
   "private": true,
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^7.20.0",
-    "eslint-config-standard": "^16.0.2",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.3.1"
+    "markdownlint-cli2": "^0.6.0",
+    "standard": "^17.0.0"
   }
 }

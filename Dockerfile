@@ -1,10 +1,16 @@
 # Use offical Node.js image.  The image uses Apline Linux
-FROM node:16.13-alpine
+FROM node:18.14.0-alpine3.17
 
 # Build-time metadata as defined at https://github.com/opencontainers/image-spec/blob/master/annotations.md
 ARG BUILD_DATE
 ARG DOCKER_TAG
 ARG GIT_SHA
+
+# Optimize Node.js tooling for production
+ENV NODE_ENV production
+
+# Install timezone database to allow setting timezone through TZ environment variable
+RUN apk add --no-cache tzdata
 
 LABEL org.opencontainers.image.created=$BUILD_DATE \
   org.opencontainers.image.authors="Steven Mayotte" \
@@ -20,20 +26,22 @@ LABEL org.opencontainers.image.created=$BUILD_DATE \
   org.opencontainers.image.description="Update AWS Route53 hosted zone with current public IP address. Alternative to Dynamic DNS services such as Dyn, No-IP, etc"
 
 # Create app directory
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# Install app dependencies
-COPY package.json /usr/src/app/
-RUN npm install
+# Install only production dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY --chown=node:node package*.json ./
+RUN npm ci --omit=dev
 
 # Bundle app source
-COPY . /usr/src/app
+COPY --chown=node:node . .
 
-# Change file-owner to non-root user
-RUN chown -R node:node /usr/src/app
-RUN chmod -R 755 /usr/src/app
+# Create data directory for application logs and temporary file with last known IP address with read/write permissions
+# for all users to support running the container with alternate user
+RUN mkdir data && chmod 777 data
+
+# Don’t run Node.js apps as root
 USER node
 
-# Run server.js every 30 seconds
-CMD ["npm", "start"]
+# Run server.js
+CMD [ "node", "server.js" ]
