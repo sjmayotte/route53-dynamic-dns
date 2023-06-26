@@ -11,7 +11,7 @@
   "dependencies": {
     "@aws-sdk/client-route-53": "^3.359.0",
     "@aws-sdk/client-ses": "^3.359.0",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.3.1",
     "log4js": "^6.9.1"
   },
   "engines": {
@@ -20,7 +20,7 @@
   "private": true,
   "license": "MIT",
   "devDependencies": {
-    "markdownlint-cli2": "^0.7.0",
-    "standard": "^17.0.0"
+    "markdownlint-cli2": "^0.8.1",
+    "standard": "^17.1.0"
   }
 }
