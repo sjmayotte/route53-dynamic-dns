@@ -27,7 +27,7 @@ jobs:
       - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
-          node-version: 18.17
+          node-version: 18.18
 
       # This command is similar to npm install, except it's meant to be used in
       # automated environments such as test platforms, continuous integration,
