@@ -20,7 +20,7 @@
   "private": true,
   "license": "MIT",
   "devDependencies": {
-    "markdownlint-cli2": "^0.8.1",
+    "markdownlint-cli2": "^0.10.0",
     "standard": "^17.1.0"
   }
 }
