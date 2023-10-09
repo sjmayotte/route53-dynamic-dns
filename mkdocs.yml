@@ -22,8 +22,8 @@ extra:
     provider: google
     property: G-RPGNP3RWVE
   #seo:
-    #google: 
-    #bing: 
+    #google:
+    #bing:
 
 theme:
   name: material
@@ -57,6 +57,7 @@ nav:
   - Installation:
     - Docker: install/docker.md
     - Node Process: install/node.md
+    - Kubernetes: install/kubernetes.md
   - Usage:
     - Docker: usage/docker.md
     - Node Process: usage/node.md
