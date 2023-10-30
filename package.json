@@ -15,7 +15,7 @@
     "log4js": "^6.9.1"
   },
   "engines": {
-    "node": "^18.14"
+    "node": ">=18"
   },
   "private": true,
   "license": "MIT",
