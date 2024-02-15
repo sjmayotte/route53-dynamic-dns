@@ -21,13 +21,13 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Set version of node to use
-      - name: Use Node.js 18
+      - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: 18.8
+          node-version: 20.x
 
       # This command is similar to npm install, except it's meant to be used in
       # automated environments such as test platforms, continuous integration,
@@ -52,7 +52,7 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Set tag to release version tag if one is present (in format v.1.0.0)
       # otherwise consider this a dev build
@@ -62,15 +62,15 @@ jobs:
 
       # Setup QEMU for building various versions of container
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       # Setup Buildx before building container
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       # Login to DockerHub
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -83,13 +83,13 @@ jobs:
       # If release tag in format (v1.0.0) tag container with
       # git tag and also tag with latest
       - name: Build & Push Container for Release Version & Latest Tag
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: ${{ startsWith(steps.vars.outputs.tag, 'v') }}
         with:
           context: .
           file: ./Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
           tags: |
             sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
             sjmayotte/route53-dynamic-dns:latest
@@ -100,13 +100,13 @@ jobs:
 
       # Tag container for non release versions
       - name: Build & Push Container for Dev Tag
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: ${{ startsWith(steps.vars.outputs.tag, 'v') == false }}
         with:
           context: .
           file: ./Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
           tags: sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
           build-args: |
             GIT_SHA=$GITHUB_SHA
@@ -128,7 +128,7 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         # Number of commits to fetch. 0 indicates all history for all branches and tags.
         # Required for https://timvink.github.io/mkdocs-git-revision-date-localized-plugin/index.html
         with:
