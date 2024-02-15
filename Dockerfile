@@ -1,5 +1,5 @@
 # Use offical Node.js image.  The image uses Apline Linux
-FROM node:18.18.2-alpine3.18
+FROM node:20.11.0-bookworm-slim
 
 # Build-time metadata as defined at https://github.com/opencontainers/image-spec/blob/master/annotations.md
 ARG BUILD_DATE
@@ -10,7 +10,7 @@ ARG GIT_SHA
 ENV NODE_ENV production
 
 # Install timezone database to allow setting timezone through TZ environment variable
-RUN apk add --no-cache tzdata
+RUN apt install tzdata
 
 LABEL org.opencontainers.image.created=$BUILD_DATE \
   org.opencontainers.image.authors="Steven Mayotte" \
