@@ -21,7 +21,7 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Set version of node to use
       - name: Use Node.js 18
@@ -52,7 +52,7 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Set tag to release version tag if one is present (in format v.1.0.0)
       # otherwise consider this a dev build
@@ -128,7 +128,7 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         # Number of commits to fetch. 0 indicates all history for all branches and tags.
         # Required for https://timvink.github.io/mkdocs-git-revision-date-localized-plugin/index.html
         with:
