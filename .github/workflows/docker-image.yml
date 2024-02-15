@@ -83,7 +83,7 @@ jobs:
       # If release tag in format (v1.0.0) tag container with
       # git tag and also tag with latest
       - name: Build & Push Container for Release Version & Latest Tag
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: ${{ startsWith(steps.vars.outputs.tag, 'v') }}
         with:
           context: .
@@ -100,7 +100,7 @@ jobs:
 
       # Tag container for non release versions
       - name: Build & Push Container for Dev Tag
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: ${{ startsWith(steps.vars.outputs.tag, 'v') == false }}
         with:
           context: .
