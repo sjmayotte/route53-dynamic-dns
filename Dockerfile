@@ -10,7 +10,7 @@ ARG GIT_SHA
 ENV NODE_ENV production
 
 # Install timezone database to allow setting timezone through TZ environment variable
-RUN apk add --no-cache tzdata
+RUN apt install tzdata
 
 LABEL org.opencontainers.image.created=$BUILD_DATE \
   org.opencontainers.image.authors="Steven Mayotte" \
