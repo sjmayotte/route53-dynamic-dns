@@ -1,5 +1,5 @@
 # Use offical Node.js image.  The image uses Apline Linux
-FROM node:20.12.2-bookworm-slim
+FROM node:22.3.0-bookworm-slim
 
 # Build-time metadata as defined at https://github.com/opencontainers/image-spec/blob/master/annotations.md
 ARG BUILD_DATE
