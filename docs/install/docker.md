@@ -18,19 +18,19 @@ compatibility in future versions, but everyone should be aware of how versions a
 be hands-off on upgrades, it should be safe to use `latest` version. If your primary concern is stability, it is
 recommended that you use a specific version (see below).
 
-### `route53-dynamic-dns:v1.3.9`
+### `route53-dynamic-dns:v1.4.0`
 
-Stable version built from tag `v1.3.9`. The code is also available
-as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.3.9`.
+Stable version built from tag `v1.4.0`. The code is also available
+as [GitHub Release](https://github.com/sjmayotte/route53-dynamic-dns/releases) with tag `v1.4.0`.
 
 ### `route53-dynamic-dns:dev`
 
 Automated build triggers with every `git push` to `master` branch. This version is not guaranteed to be stable. If you
-are looking for a stable version, please use `route53-dynamic-dns:v1.3.9` or `route53-dynamic-dns:latest`.
+are looking for a stable version, please use `route53-dynamic-dns:v1.4.0` or `route53-dynamic-dns:latest`.
 
 ## Pull Image
 
-Pull image from DockerHub. Replace `[version]` with desired version (ex: `v1.3.9`).
+Pull image from DockerHub. Replace `[version]` with desired version (ex: `v1.4.0`).
 
 ```bash
 docker pull sjmayotte/route53-dynamic-dns:[verison]
