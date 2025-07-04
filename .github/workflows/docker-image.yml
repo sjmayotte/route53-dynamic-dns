@@ -24,10 +24,10 @@ jobs:
         uses: actions/checkout@v4
 
       # Set version of node to use
-      - name: Use Node.js 22
+      - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: 24.x
 
       # This command is similar to npm install, except it's meant to be used in
       # automated environments such as test platforms, continuous integration,
@@ -83,13 +83,13 @@ jobs:
       # If release tag in format (v1.0.0) tag container with
       # git tag and also tag with latest
       - name: Build & Push Container for Release Version & Latest Tag
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         if: ${{ startsWith(steps.vars.outputs.tag, 'v') }}
         with:
           context: .
           file: ./Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
+          platforms: linux/amd64,linux/arm64/v8
           tags: |
             sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
             sjmayotte/route53-dynamic-dns:latest
@@ -100,13 +100,13 @@ jobs:
 
       # Tag container for non release versions
       - name: Build & Push Container for Dev Tag
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         if: ${{ startsWith(steps.vars.outputs.tag, 'v') == false }}
         with:
           context: .
           file: ./Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
+          platforms: linux/amd64,linux/arm64/v8
           tags: sjmayotte/route53-dynamic-dns:${{ steps.vars.outputs.tag }}
           build-args: |
             GIT_SHA=$GITHUB_SHA

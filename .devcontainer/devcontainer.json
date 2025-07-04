@@ -5,7 +5,7 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		// Update 'VARIANT' to pick a Node version: 12, 14, 16
-		"args": { "VARIANT": "19" }
+		"args": { "VARIANT": "24" }
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
