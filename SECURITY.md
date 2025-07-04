@@ -7,7 +7,8 @@ the future. Everyone is encouraged to use the latest version.
 
 | Version | Supported          |
 |---------|--------------------|
-| 1.2.x   | :white_check_mark: |
+| 1.4.x   | :white_check_mark: |
+| 1.2.x   | :x:                |
 | 1.1.x   | :x:                |
 | 1.0.x   | :x:                |
 | dev     | :x:                |
