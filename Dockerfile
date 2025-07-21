@@ -1,5 +1,5 @@
 # Use offical Node.js image.  The image uses Apline Linux
-FROM node:24.3.0-alpine3.21
+FROM node:24.4.1-alpine3.21
 
 # Build-time metadata as defined at https://github.com/opencontainers/image-spec/blob/master/annotations.md
 ARG BUILD_DATE
