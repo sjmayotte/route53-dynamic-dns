@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-route-53": "^3.848.0",
-    "@aws-sdk/client-ses": "^3.840.0",
+    "@aws-sdk/client-ses": "^3.848.0",
     "dotenv": "^17.0.1",
     "log4js": "^6.9.1"
   },
