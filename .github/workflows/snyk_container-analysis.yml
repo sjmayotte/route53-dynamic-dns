@@ -59,6 +59,11 @@ jobs:
       - name: Replace security-severity null for license-related findings
         run: >
           sed -i 's/"security-severity": "null"/"security-severity": "0"/g' snyk.sarif
+      - name: Upload SARIF for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-sarif
+          path: snyk.sarif
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         with:
