@@ -59,7 +59,31 @@ jobs:
       - name: Replace security-severity null for license-related findings
         run: >
           sed -i 's/"security-severity": "null"/"security-severity": "0"/g' snyk.sarif
-      - name: Upload result to GitHub Code Scanning
+      # As of July 22nd 2025 Github no longer allow multiple runs (same tool and category) in the same SARIF file.
+      # Individual runs must be split in separated SARIF files with use of concept category.
+      # The action "snyk/actions/docker" is testing 3 projects within the same Docker image
+      # (base OS, app package.json, and global Node modules). We need to split these runs into individual SARIF files.
+      # https://github.blog/changelog/2025-07-21-code-scanning-will-stop-combining-multiple-sarif-runs-uploaded-in-the-same-sarif-file/
+      - name: Split SARIF file into individual runs
+        run: |
+          mkdir split-sarif
+          jq -c '.runs[]' snyk.sarif | nl -v 0 | while read -r index line; do
+            echo "{\"version\": \"2.1.0\", \"runs\": [${line}]}" > split-sarif/run-${index}.sarif
+          done
+      - name: Upload SARIF run for base docker image
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: snyk.sarif
+          sarif_file: split-sarif/run-0.sarif
+          category: snyk-apk
+
+      - name: Upload SARIF run for npm dependencies
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: split-sarif/run-1.sarif
+          category: snyk-npm-app
+
+      - name: Upload SARIF run for global Node modules
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: split-sarif/run-2.sarif
+          category: snyk-npm-global
