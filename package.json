@@ -11,7 +11,7 @@
   "dependencies": {
     "@aws-sdk/client-route-53": "^3.969.0",
     "@aws-sdk/client-ses": "^3.969.0",
-    "dotenv": "^17.2.0",
+    "dotenv": "^17.2.3",
     "log4js": "^6.9.1"
   },
   "engines": {
