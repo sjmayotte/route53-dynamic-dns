@@ -9,9 +9,9 @@
     "test": "standard && markdownlint-cli2 '*.md' '**/*.md' '#node_modules'"
   },
   "dependencies": {
-    "@aws-sdk/client-route-53": "^3.1016.0",
-    "@aws-sdk/client-ses": "^3.1016.0",
-    "dotenv": "^17.2.3",
+    "@aws-sdk/client-route-53": "^3.1057.0",
+    "@aws-sdk/client-ses": "^3.1057.0",
+    "dotenv": "^17.4.2",
     "log4js": "^6.9.1"
   },
   "engines": {
@@ -20,7 +20,7 @@
   "private": true,
   "license": "MIT",
   "devDependencies": {
-    "markdownlint-cli2": "^0.20.0",
+    "markdownlint-cli2": "^0.22.1",
     "standard": "^17.1.2"
   }
 }
