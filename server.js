@@ -209,13 +209,17 @@ const DeterminePublicIP = function () {
 
   logger.info('HTTPS GET ' + ipChecker[IPCHECKER].url)
   // Get public IP
+  let rawData = ''
   https.get(ipChecker[IPCHECKER].url, (res) => {
     logger.info('Status Code:', res.statusCode, res.statusMessage)
     res.on('data', (data) => {
       if (res.statusCode === 200) {
-        // Set current IP
-        currentIP += data
-        currentIP = currentIP.replace(/(\r\n|\n|\r)/gm, '')
+        rawData += data
+      }
+    })
+    res.on('end', () => {
+      if (res.statusCode === 200) {
+        currentIP = rawData.replace(/(\r\n|\n|\r)/gm, '')
         logger.info('Current Public IP (' + ipChecker[IPCHECKER].fullname + '):', currentIP)
         FindLastKnownIPLocally()
       }
@@ -269,8 +273,7 @@ const FindLastKnownIPLocally = function () {
           SendErrorNotificationEmail('An error occurred that needs to be reviewed.  Here are logs that are immediately available.<br /><br />' + err.message + '<br /><br />' + err.stack)
         } else {
           // Get previousIP from file
-          previousIP += data
-          previousIP = previousIP.replace('\n', '')
+          previousIP = data.toString().replace(/(\r\n|\n|\r)/gm, '')
           // Determine if we need to update Route53
           CompareCurrentIPtoLastKnownIP()
         }

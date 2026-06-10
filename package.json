@@ -9,8 +9,8 @@
     "test": "standard && markdownlint-cli2 '*.md' '**/*.md' '#node_modules'"
   },
   "dependencies": {
-    "@aws-sdk/client-route-53": "^3.1057.0",
-    "@aws-sdk/client-ses": "^3.1057.0",
+    "@aws-sdk/client-route-53": "^3.1065.0",
+    "@aws-sdk/client-ses": "^3.1065.0",
     "dotenv": "^17.4.2",
     "log4js": "^6.9.1"
   },
