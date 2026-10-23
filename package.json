@@ -1,6 +1,6 @@
 {
   "name": "route53dynamicdns",
-  "version": "1.4.0",
+  "version": "1.4.5",
   "description": "Update AWS Route53 hosted zone with current public IP address.  Alternative to Dynamic DNS services such as Dyn, No-IP, etc",
   "author": "Steven Mayotte <mayots@gmail.com>",
   "main": "server.js",
@@ -9,9 +9,9 @@
     "test": "standard && markdownlint-cli2 '*.md' '**/*.md' '#node_modules'"
   },
   "dependencies": {
-    "@aws-sdk/client-route-53": "^3.1065.0",
-    "@aws-sdk/client-ses": "^3.1065.0",
-    "dotenv": "^17.4.2",
+    "@aws-sdk/client-route-53": "^3.1156.0",
+    "@aws-sdk/client-ses": "^3.1156.0",
+    "dotenv": "^18.0.9",
     "log4js": "^6.9.1"
   },
   "engines": {
@@ -20,7 +20,7 @@
   "private": true,
   "license": "MIT",
   "devDependencies": {
-    "markdownlint-cli2": "^0.22.1",
+    "markdownlint-cli2": "^0.24.0",
     "standard": "^17.1.2"
   }
 }
