@@ -6,7 +6,7 @@ please [download and install Node.js and NPM](https://nodejs.org/en/download/) b
 ## Download Release
 
 Download release `version` from [release repository](https://github.com/sjmayotte/route53-dynamic-dns/releases). For
-example, you can use `v1.4.0.tar.gz` to download source for release tag `v1.4.0`.
+example, you can use `v1.4.5.tar.gz` to download source for release tag `v1.4.5`.
 
 ```bash
 curl -sL https://github.com/sjmayotte/route53-dynamic-dns/archive/[version] | tar xz
